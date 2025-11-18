@@ -93,6 +93,7 @@
       "name": "default",
       "displayName": "Default build (everything and test deps)",
       "configurePreset": "default",
+      "jobs": 32,
       "targets": ["all", "iree-test-deps"]
     },
     {

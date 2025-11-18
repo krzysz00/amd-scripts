@@ -1,0 +1,7 @@
+{
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "mlir.server_path": "build/tools/iree-mlir-lsp-server",
+    "editor.tabSize": 2,
+    "cmake.ctest.allowParallelJobs": true,
+    "cmake.useCMakePresets": "always"
+}

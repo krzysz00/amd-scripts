@@ -1,0 +1,150 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 28,
+      "patch": 0
+  },
+  "include": [
+    "build_tools/cmake/presets/new.json"
+  ],
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default build",
+      "description": "Default build for IREE on ROCm Linux. Uses relative build/",
+      "inherits": "new-linux-dev",
+      "binaryDir": "${sourceDir}/build",
+      "installDir": "${sourceDir}/build/install",
+      "cacheVariables": {
+        "IREE_BUILD_TRACY": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "IREE_BUILD_PYTHON_BINDINGS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "LLVM_INSTALL_UTILS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "IREE_USE_RELATIVE_PATHS_IN_FILES": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "IREE_HIP_TEST_TARGET_CHIP": {
+          "type": "STRING",
+          "value": "$env{ROCM_CHIP}"
+        },
+
+        "IREE_HAL_DRIVER_CUDA": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "IREE_HAL_DRIVER_VULKAN": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "IREE_HAL_DRIVER_HIP": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "IREE_TARGET_BACKEND_CUDA": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "IREE_TARGET_BACKEND_ROCM": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "debug",
+      "displayName": "Debug build",
+      "description": "The default build but set for debugging",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "tracy",
+      "displayName": "Tracy build",
+      "description": "Build for tracing (targets build-tracy/)",
+      "inherits": "default",
+      "binaryDir": "${sourceDir}/build-tracy",
+      "cacheVariables": {
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "IREE_ENABLE_RUNTIME_TRACING": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "default",
+      "displayName": "Default build (everything and test deps)",
+      "configurePreset": "default",
+      "targets": ["all", "iree-test-deps"]
+    },
+    {
+      "name": "compiler",
+      "displayName": "Rebuild compiler",
+      "inherits": "default",
+      "targets": ["iree-opt", "iree-compiler", "opt", "llc"]
+    }
+  ],
+
+  "testPresets": [
+    {
+      "name": "default",
+      "displayName": "Run all tests",
+      "configurePreset": "default",
+      "output": {
+        "outputOnFailure": true
+      },
+      "execution" : {
+        "jobs": 16
+      }
+    },
+
+    {
+      "name": "no-e2e",
+      "displayName": "Exclude e2e tests",
+      "inherits": "default",
+      "filter": {
+        "exclude": {
+          "name": "e2e"
+        }
+      }
+    }
+  ],
+
+  "workflowPresets": [
+    {
+      "name": "test",
+      "displayName": "Build and test IREE",
+      "steps": [
+        { "type": "configure", "name": "default" },
+        { "type": "build", "name": "default" },
+        { "type": "test", "name": "default" }
+      ]
+    },
+    {
+      "name": "build",
+      "displayName": "Build IREE",
+      "steps": [
+        { "type": "configure", "name": "default" },
+        { "type": "build", "name": "default" }
+      ]
+    }
+  ]
+}

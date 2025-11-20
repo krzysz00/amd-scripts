@@ -19,7 +19,9 @@ if [[ ! -f "$root_dir/.envrc" ]]; then
     direnv allow .
 fi
 eval "$(direnv export zsh)"
+echo "Installing Python dependencies..."
 pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
+pip install -q pygments # LLVM needs this
 
 if [[ ! -f "$root_dir/src/compile_commands.json" ]]; then
     ln -sv "$root_dir/build/compile_commands.json" "src/compile_commands.json"

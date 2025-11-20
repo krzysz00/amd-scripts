@@ -19,6 +19,7 @@ if [[ ! -f "$root_dir/.envrc" ]]; then
     direnv allow .
 fi
 eval "$(direnv export zsh)"
+echo "Installing Python dependencies..."
 pip install -q numpy scipy ml_dtypes nanobind pre-commit
 
 if [[ ! -f "$root_dir/src/compile_commands.json" ]]; then

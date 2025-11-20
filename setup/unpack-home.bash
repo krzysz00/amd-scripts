@@ -84,3 +84,4 @@ npm install -g @anthropic-ai/claude-code
 echo "Next steps"
 echo " - chsh # /usr/bin/zsh"
 echo " - import GPG key"
+echo " - pre-commit install in main IREE branch"

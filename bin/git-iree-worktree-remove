@@ -1,0 +1,61 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+IREES="$HOME/iree"
+MAIN_IREE="$IREES/main/src"
+SCRIPTS_ROOT="${0:a:h:h}"
+
+if [[ ! -d $MAIN_IREE ]]; then
+    echo "No main IREE repository in the expected place"
+    exit 1
+fi
+
+if [[ $# -ne 1 ]]; then
+    echo "Usage: $0 <branch or path>"
+    echo ""
+    echo "Remove the worktree for the named branch (or if no such branch"
+    echo "at the given path), getting rid of submodules and the build environment."
+    exit 1
+fi
+
+declare BRANCH_OR_PATH=$1
+declare WORKTREE_PATH
+cd "$MAIN_IREE"
+if git check-ref-format --branch "$BRANCH_OR_PATH" >/dev/null \
+        && git worktree list --porcelain | grep -q "^branch refs/heads/$BRANCH_OR_PATH"; then
+    WORKTREE_PATH=$(git worktree list --porcelain | grep -B2 "^branch refs/heads/$BRANCH_OR_PATH" | head -1 | cut -d ' ' -f 2)
+elif [[ -d "$BRANCH_OR_PATH" ]] && [[ -d "$BRANCH_OR_PATH/.git" ]]; then
+    WORKTREE_PATH="${BRANCH_OR_PATH:a}"
+elif [[ -d "$BRANCH_OR_PATH/src" ]]; [[ -d "$BRANCH_OR_PATH/src/.git" ]]; then
+    WORKTREE_PATH="$BRANCH_OR_PATH/src"
+    WORKTREE_PATH="${WORKTREE_PATH:a}"
+elif [[ -d "$IREES/$BRANCH_OR_PATH/src/.git" ]]; then
+    WORKTREE_PATH="$IREES/$BRANCH_OR_PATH/src"
+else
+    echo "Could not find worktree for branch/path: $BRANCH_OR_PATH"
+    exit 1
+fi
+
+if [[ ! -d "$WORKTREE_PATH" ]]; then
+    echo "Somehow, $WORKTREE_PATH doesn't exist. Can't happen."
+    exit 2
+fi
+
+WORKTREE_ENV="${WORKTREE_PATH:h}"
+cd "$WORKTREE_PATH"
+echo "Removing worktree ${WORKTREE_PATH}"
+echo "Unregistering submodules..."
+git submodule deinit --all
+echo "Deleting submodule checkouts..."
+rm -rf "$(git rev-parse --git-dir)/modules" || true
+
+cd "$MAIN_IREE"
+echo "Removing worktree $WORKTREE_PATH ..."
+# Now that we've cleaned out the submodules, no need for force
+git worktree remove "$WORKTREE_PATH"
+
+echo "Removing build and environment in ${WORKTREE_ENV} ..."
+rm -rf -- "${WORKTREE_ENV}/build" "${WORKTREE_ENV}/.direnv" "${WORKTREE_ENV}/.envrc" || true
+rmdir "${WORKTREE_ENV}" || echo "There's still something in the worktree"
+echo "Removed worktree $BRANCH_OR_PATH at $WORKTREE_ENV"

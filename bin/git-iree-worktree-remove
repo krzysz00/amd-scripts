@@ -22,15 +22,15 @@ fi
 declare BRANCH_OR_PATH=$1
 declare WORKTREE_PATH
 cd "$MAIN_IREE"
-if git check-ref-format --branch "$BRANCH_OR_PATH" >/dev/null \
+if git check-ref-format --branch "$BRANCH_OR_PATH" 2>/dev/null >/dev/null \
         && git worktree list --porcelain | grep -q "^branch refs/heads/$BRANCH_OR_PATH"; then
     WORKTREE_PATH=$(git worktree list --porcelain | grep -B2 "^branch refs/heads/$BRANCH_OR_PATH" | head -1 | cut -d ' ' -f 2)
-elif [[ -d "$BRANCH_OR_PATH" ]] && [[ -d "$BRANCH_OR_PATH/.git" ]]; then
+elif [[ -d "$BRANCH_OR_PATH" ]] && [[ -f "$BRANCH_OR_PATH/.git" ]]; then
     WORKTREE_PATH="${BRANCH_OR_PATH:a}"
-elif [[ -d "$BRANCH_OR_PATH/src" ]]; [[ -d "$BRANCH_OR_PATH/src/.git" ]]; then
+elif [[ -d "$BRANCH_OR_PATH/src" ]]; [[ -f "$BRANCH_OR_PATH/src/.git" ]]; then
     WORKTREE_PATH="$BRANCH_OR_PATH/src"
     WORKTREE_PATH="${WORKTREE_PATH:a}"
-elif [[ -d "$IREES/$BRANCH_OR_PATH/src/.git" ]]; then
+elif [[ -f "$IREES/$BRANCH_OR_PATH/src/.git" ]]; then
     WORKTREE_PATH="$IREES/$BRANCH_OR_PATH/src"
 else
     echo "Could not find worktree for branch/path: $BRANCH_OR_PATH"

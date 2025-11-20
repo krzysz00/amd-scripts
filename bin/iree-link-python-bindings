@@ -10,8 +10,10 @@ fi
 declare build_dir
 if [[ -f "$PWD/tools/iree-opt" ]]; then
     build_dir="$PWD"
-elif [[ -f "${PWD:h}/bui/d/tools/iree-opt" ]]; then
+elif [[ -f "${PWD:h}/build/tools/iree-opt" ]]; then
     build_dir="${PWD:h}/build"
+elif [[ -f "$PWD/build/tools-iree-opt" ]]; then
+    build_dir="$PWD/build"
 else
     echo "Can't find a built IREE"
     exit 1

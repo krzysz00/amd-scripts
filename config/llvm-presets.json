@@ -1,0 +1,154 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": {
+      "major": 3,
+      "minor": 28,
+      "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "displayName": "Default",
+      "description": "Default LLVM+MLIR on AMD",
+      "binaryDir": "${sourceParentDir}/../build",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+        "LLVM_ENABLE_PROJECTS": {
+          "type": "STRING",
+          "value": "mlir;lld"
+        },
+        "CMAKE_C_COMPILER": {
+          "type": "STRING",
+          "value": "clang"
+        },
+        "CMAKE_CXX_COMPILER": {
+          "type": "STRING",
+          "value": "clang++"
+        },
+        "BUILD_SHARED_LIBS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "LLVM_USE_LINKER": {
+          "type": "STRING",
+          "value": "lld"
+        },
+        "LLVM_APPEND_VC_REV": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "LLVM_CCACHE_BUILD": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "LLVM_TARGETS_TO_BUILD": {
+          "type": "STRING",
+          "value": "AMDGPU;X86"
+        },
+        "LLVM_USE_RELATIVE_PATHS_IN_FILES": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "MLIR_ENABLE_BINDINGS_PYTHON": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "MLIR_ENABLE_ROCM_CONVERSIONS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "MLIR_ENABLE_ROCM_RUNNER": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "MLIR_INCLUDE_INTEGRATION_TESTS": {
+          "type": "BOOL",
+          "value": "OFF"
+        },
+        "LLD_BUILD_TOOLS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name":"default-debug",
+      "displayName": "Default (debug)",
+      "inherits": "default",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "full",
+      "displayName": "Full build (add Clang, integration tests, tragets)",
+      "description": "Add stuff I don't normally build for when CI fails",
+      "inherits": "default",
+      "cacheVariables": {
+        "LLVM_ENABLE_PROJECTS": {
+          "type": "STRING",
+          "value": "mlir;lld;clang;flang"
+        },
+        "LLVM_TARGETS_TO_BUILD": {
+          "type": "STRING",
+          "value": "all"
+        },
+        "MLIR_ENABLE_ROCM_RUNNER": {
+          "type": "BOOL",
+          "value": "ON"
+        },
+        "MLIR_INCLUDE_INTEGRATION_TESTS": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
+    },
+    {
+      "name": "full-debug",
+      "displayName": "Full build (debug)",
+      "inherits": "full",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "mlir",
+      "displayName": "MLIR",
+      "description": "Build and test MLIR",
+      "configurePreset": "default",
+      "targets": ["check-mlir"]
+    },
+    {
+      "name": "build-mlir",
+      "displayName": "Build MLIR",
+      "configurePreset": "default",
+      "targets": ["check-mlir-build-only"]
+    },
+    {
+      "name": "llvm",
+      "displayName": "LLVM",
+      "description": "Build and test LLVM",
+      "configurePreset": "default",
+      "targets": ["check-llvm"]
+    },
+    {
+      "name": "recheck-llvm",
+      "displayName": "Just opt and LLC",
+      "description": "Only build opt and llc so we can iterate a test",
+      "configurePreset": "default",
+      "targets": ["opt", "llc"]
+    },
+    {
+      "name": "check-llvm-amdgpu",
+      "displayName": "LLVM (AMD tests only)",
+      "inherits": "llvm",
+      "environment": {
+        "LIT_FILTER": "AMDGPU"
+      }
+    }
+  ]
+}

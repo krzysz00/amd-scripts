@@ -1,0 +1,94 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+IREES="$HOME/iree"
+MAIN_IREE="$IREES/main/src"
+SCRIPTS_ROOT="${0:a:h:h}"
+
+if [[ ! -d $MAIN_IREE ]]; then
+    echo "No main IREE repository in the expected place"
+    exit 1
+fi
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 <branch name> [tree name]"
+    echo ""
+    echo "Create a worktree based off of [branch name], creating it if"
+    echo "it doesn't exist. The worktree is created at ~/iree/[tree name]/src"
+    echo "where [tree name] defaults to <branch name> with the stacking PR bits"
+    echo "removed. It then sets up submodules to copy off of the main checkout"
+    echo "and creates a VS code workspace file. (Modelled on Ben's, who got his"
+    echo "from Claude)"
+    exit 1
+fi
+
+declare BRANCH=$1
+declare WORKTREE_NAME
+if [[ $# -lt 2 ]]; then
+    WORKTREE_NAME="${1:t}"
+else
+    WORKTREE_NAME="$2"
+fi
+
+WORKTREE_ROOT="$IREES/$WORKTREE_NAME"
+WORKTREE_SRC_ROOT="$WORKTREE_ROOT/src"
+if [[ -d "$WORKTREE_ROOT" ]]; then
+    echo "Will not overwrite existing worktree: $WORKTREE_ROOT"
+    exit 1
+fi
+
+cd "$MAIN_IREE"
+
+if ! git show-ref --quiet --branches "$BRANCH"; then
+    echo "Creating branch $BRANCH from $(git rev-parse --abbrev-ref HEAD)"
+    git branch "$BRANCH"
+fi
+
+printf "Creating worktree ...\n  - Branch: %s\n -- Path: %s\n" "$BRANCH" "$WORKTREE_ROOT"
+
+# Because all my worktrees end in src/, find out which bit of git internals
+# we need to update for submodules handling by taking the difference of the
+# old list of worktrees and the new one.
+old_worktrees_list=$(mktemp)
+new_worktrees_list=$(mktemp)
+trap "rm -f \"${old_worktrees_list}\" \"${new_worktrees_list}\"" EXIT INT TERM HUP
+if [[ -d .git/worktrees ]]; then
+    ls .git/worktrees >"${old_worktrees_list}"
+fi
+
+mkdir -p "$WORKTREE_ROOT"
+git worktree add "$WORKTREE_SRC_ROOT" "$BRANCH"
+ls .git/worktrees >"${new_worktrees_list}"
+WORKTREE_REFS_PATH=$(comm -13 "${old_worktrees_list}" "${new_worktrees_list}")
+
+echo "Worktree refs are at ${WORKTREE_REFS_PATH}"
+if [[ ! -d ".git/worktrees/${WORKTREE_REFS_PATH}" ]]; then
+   echo "Couldn't find new worktree git info at ${WORKTREE_REFS_PATH}"
+   exit 1
+fi
+
+cd "$WORKTREE_SRC_ROOT"
+mkdir -p .vscode
+[[ -d .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/iree-vscode-settings.json" ".vscode/settings.json"
+[[ -f CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/iree-presets.json" CMakeUserPresets.json
+
+git submodule --quiet init
+# Note: this dosen't create recursive submodules but it's fine since Torch
+# uses our copies
+for submodule in $(git config get --file=.gitmodules --all --regexp path); do
+    echo "Creating quasi-worktree of $submodule"
+    git submodule update --reference "$MAIN_IREE/$submodule" "$submodule"
+done
+
+# Set up a VS code workspace file through the magic of templates.
+sed -e "s/#branch#/$WORKTREE_NAME/g" "${SCRIPTS_ROOT}/config/iree.code-workspace.template" >"iree-${WORKTREE_NAME}.code-workspace"
+
+echo "Creating virtual environment ..."
+"${SCRIPTS_ROOT}/bin/iree-setup-environment" "$WORKTREE_ROOT"
+
+echo "Created worktree ${WORKTREE_NAME} at ${WORKTREE_ROOT}"
+echo "Next steps"
+echo "  - cd ${WORKTREE_SRC_ROOT}"
+echo "  - cmake --preset=default"
+echo "  - cmake --build --preset=default"

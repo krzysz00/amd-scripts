@@ -14,9 +14,17 @@
       "displayName": "Default build",
       "description": "Default build for IREE on ROCm Linux. Uses relative build/",
       "inherits": "new-linux-dev",
-      "binaryDir": "${sourceDir}/build",
-      "installDir": "${sourceDir}/build/install",
+      "binaryDir": "${sourceParentDir}/build",
+      "installDir": "${sourceParentDir}/build/install",
       "cacheVariables": {
+        "CMAKE_C_FLAGS": {
+          "type": "STRING",
+          "value": "-ffile-prefix-map=${sourceDir}=${sourceDirName} -ffile-prefix-map=${sourceParentDir}/build=build"
+        },
+        "CMAKE_CXX_FLAGS": {
+          "type": "STRING",
+          "value": "-ffile-prefix-map=${sourceDir}=${sourceDirName} -ffile-prefix-map=${sourceParentDir}/build=build"
+        },
         "IREE_BUILD_TRACY": {
           "type": "BOOL",
           "value": "ON"
@@ -26,10 +34,6 @@
           "value": "ON"
         },
         "LLVM_INSTALL_UTILS": {
-          "type": "BOOL",
-          "value": "ON"
-        },
-        "IREE_USE_RELATIVE_PATHS_IN_FILES": {
           "type": "BOOL",
           "value": "ON"
         },

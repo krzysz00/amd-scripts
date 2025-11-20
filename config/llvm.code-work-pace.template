@@ -1,0 +1,12 @@
+{
+  "name": "LLVM #branch#",
+  "folders": [
+    {
+      "path": ".",
+      "name": "#branch# llvm"
+    }
+  ],
+  "settings": {
+    "window.title": "${dirty}${activeEditorShort}${separator}#branch#${separator}llvm${separator}${remoteName}${separator}${profileName}"
+  }
+}

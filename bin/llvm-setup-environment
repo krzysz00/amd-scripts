@@ -1,0 +1,28 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+if [[ $# -lt 1 ]]; then
+   echo "Usage: $0 [root directory]"
+   exit 1
+fi
+
+root_dir="$1"
+if [[ ! -d "$root_dir/src/mlir" ]]; then
+    echo "Error: expected $root_dir to heuristically be an LLVM checkout"
+    exit 1
+fi
+
+pushd "$root_dir"
+if [[ ! -f "$root_dir/.envrc" ]]; then
+    echo "layout python" >.envrc
+    direnv allow .
+fi
+eval "$(direnv export zsh)"
+pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
+
+if [[ ! -f "$root_dir/src/compile_commands.json" ]]; then
+    ln -sv "$root_dir/build/compile_commands.json" "src/compile_commands.json"
+fi
+
+popd

@@ -1,0 +1,25 @@
+{
+    "files.watcherExclude": {
+        "**/.ccls-cache/**": true,
+        "**/llvm-project/c*/**": true,
+        "**/llvm-project/lib*/**": true,
+        "**/lvm-project/debuginfo-tests/**": true,
+        "**/llvm-project/flang/**": true,
+        "**/llvm-project/lld*/**": true,
+        "**/llvm-project/openmp/**": true,
+        "**/llvm-project/p*/**": true,
+        "**/llvm-project/runtimes/**": true,
+        "**/llvm-project/utils/**": true,
+        "**/.cache/**": true,
+        "**/.clangd/**": true,
+        "**/.git/objects/**": true,
+        "**/.git/rr-cache/**": true,
+        "**/llvm-project/build/**": true
+    },
+    "cmake.configureOnOpen": false,
+    "C_Cpp.intelliSenseEngine": "disabled",
+    "cmake.sourceDirectory": "${workspaceFolder}/llvm",
+    "cmake.useCMakePresets": "always",
+    "editor.tabSize": 2,
+    "mlir.server_path": "build/bin/mlir-lsp-server"
+}

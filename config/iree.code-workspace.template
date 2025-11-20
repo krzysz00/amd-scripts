@@ -1,0 +1,12 @@
+{
+  "name": "IREE #branch#",
+  "folders": [
+    {
+      "path": ".",
+      "name": "#branch# iree"
+    }
+  ],
+  "settings": {
+    "window.title": "${dirty}${activeEditorShort}${separator}#branch#${separator}iree${separator}${remoteName}${separator}${profileName}"
+  }
+}

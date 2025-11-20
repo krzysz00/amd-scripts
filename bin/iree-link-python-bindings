@@ -1,0 +1,22 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+if [[ -z $VIRTUAL_ENV ]]; then
+    echo "Not in a virtual environment, refusing to run"
+    exit 1
+fi
+
+declare build_dir
+if [[ -f "$PWD/tools/iree-opt" ]]; then
+    build_dir="$PWD"
+elif [[ -f "${PWD:h}/bui/d/tools/iree-opt" ]]; then
+    build_dir="${PWD:h}/build"
+else
+    echo "Can't find a built IREE"
+    exit 1
+fi
+
+cd "$build_dir"
+env CMAKE_INSTALL_MODE=ABS_SYMLINK pip install -e compiler
+env CMAKE_INSTALL_MODE=ABS_SYMLINK pip install -e runtime

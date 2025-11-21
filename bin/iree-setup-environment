@@ -14,7 +14,7 @@ if [[ ! -d "$root_dir/src/compiler" ]]; then
 fi
 
 pushd "$root_dir"
-if [[ ! -f "$root_dir/.envrc" ]]; then
+if [[ ! -a "$root_dir/.envrc" ]]; then
     echo "use iree $root_dir $root_dir/build python3" >.envrc
     direnv allow .
 fi
@@ -22,8 +22,10 @@ eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 pip install -q numpy sympy ml_dtypes nanobind pre-commit
 
-if [[ ! -f "$root_dir/src/compile_commands.json" ]]; then
+if [[ ! -a "$root_dir/src/compile_commands.json" ]]; then
     ln -s "$root_dir/build/compile_commands.json" "src/compile_commands.json"
 fi
+
+echo "Set up IREE build envoronment in $root_dir"
 
 popd

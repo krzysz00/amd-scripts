@@ -8,7 +8,7 @@ if [[ -z $VIRTUAL_ENV ]]; then
 fi
 
 declare build_dir
-if [[ -f "$PWD/tools/iree-opt" ]]; then
+if [[ -x "$PWD/tools/iree-opt" ]]; then
     build_dir="$PWD"
 elif [[ -f "${PWD:h}/build/tools/iree-opt" ]]; then
     build_dir="${PWD:h}/build"

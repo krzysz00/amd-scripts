@@ -1,0 +1,67 @@
+#!/usr/bin/env zsh
+
+set -euo pipefail
+
+LLVMS="$HOME/llvm"
+MAIN_LLVM="$LLVMS/main/src"
+SCRIPTS_ROOT="${0:a:h:h}"
+
+if [[ ! -d $MAIN_LLVM ]]; then
+    echo "No main LLVM repository in the expected place"
+    exit 1
+fi
+
+if [[ $# -lt 1 ]]; then
+    echo "Usage: $0 <branch name> [tree name]"
+    echo ""
+    echo "Create a worktree based off of [branch name], creating it if"
+    echo "it doesn't exist. The worktree is created at ~/llvm/[tree name]/src"
+    echo "where [tree name] defaults to <branch name> with the stacking PR bits"
+    echo "removed. It then sets up a Python environment and creates a VS code"
+    echo "workspace file."
+    exit 1
+fi
+
+declare BRANCH=$1
+declare WORKTREE_NAME
+if [[ $# -lt 2 ]]; then
+    WORKTREE_NAME="${1:t}"
+else
+    WORKTREE_NAME="$2"
+fi
+
+WORKTREE_ROOT="$LLVMS/$WORKTREE_NAME"
+WORKTREE_SRC_ROOT="$WORKTREE_ROOT/src"
+if [[ -d "$WORKTREE_ROOT" ]]; then
+    echo "Will not overwrite existing worktree: $WORKTREE_ROOT"
+    exit 1
+fi
+
+cd "$MAIN_LLVM"
+
+if ! git show-ref --quiet --branches "$BRANCH"; then
+    echo "Creating branch $BRANCH from $(git rev-parse --abbrev-ref HEAD)"
+    git branch "$BRANCH"
+fi
+
+printf "Creating worktree ...\n  - Branch: %s\n -- Path: %s\n" "$BRANCH" "$WORKTREE_ROOT"
+
+mkdir -p "$WORKTREE_ROOT"
+git worktree add "$WORKTREE_SRC_ROOT" "$BRANCH"
+
+cd "$WORKTREE_SRC_ROOT"
+mkdir -p .vscode
+[[ -a .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-vscode-settings.json" ".vscode/settings.json"
+[[ -a CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-presets.json" CMakeUserPresets.json
+
+# Set up a VS code workspace file through the magic of templates.
+sed -e "s/#branch#/$WORKTREE_NAME/g" "${SCRIPTS_ROOT}/config/llvm.code-workspace.template" >"llvm-${WORKTREE_NAME}.code-workspace"
+
+echo "Creating virtual environment ..."
+"${SCRIPTS_ROOT}/bin/llvm-setup-environment" "$WORKTREE_ROOT"
+
+echo "Created worktree ${WORKTREE_NAME} at ${WORKTREE_ROOT}"
+echo "Next steps"
+echo "  - cd ${WORKTREE_SRC_ROOT}"
+echo "  - llcmake --preset=default"
+echo "  - llcmake --build --preset=default"

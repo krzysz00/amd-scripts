@@ -14,7 +14,7 @@ if [[ ! -d "$root_dir/src/mlir" ]]; then
 fi
 
 pushd "$root_dir"
-if [[ ! -f "$root_dir/.envrc" ]]; then
+if [[ ! -a "$root_dir/.envrc" ]]; then
     echo "layout python" >.envrc
     direnv allow .
 fi
@@ -23,8 +23,9 @@ echo "Installing Python dependencies..."
 pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
 pip install -q pygments # LLVM needs this
 
-if [[ ! -f "$root_dir/src/compile_commands.json" ]]; then
-    ln -sv "$root_dir/build/compile_commands.json" "src/compile_commands.json"
+if [[ ! -a "$root_dir/src/compile_commands.json" ]]; then
+    ln -s "$root_dir/build/compile_commands.json" "src/compile_commands.json"
 fi
 
+echo "Set up LLVM build environment in $root_dir"
 popd

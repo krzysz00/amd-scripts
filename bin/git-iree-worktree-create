@@ -47,26 +47,8 @@ fi
 
 printf "Creating worktree ...\n  - Branch: %s\n -- Path: %s\n" "$BRANCH" "$WORKTREE_ROOT"
 
-# Because all my worktrees end in src/, find out which bit of git internals
-# we need to update for submodules handling by taking the difference of the
-# old list of worktrees and the new one.
-old_worktrees_list=$(mktemp)
-new_worktrees_list=$(mktemp)
-trap "rm -f \"${old_worktrees_list}\" \"${new_worktrees_list}\"" EXIT INT TERM HUP
-if [[ -d .git/worktrees ]]; then
-    ls .git/worktrees >"${old_worktrees_list}"
-fi
-
 mkdir -p "$WORKTREE_ROOT"
 git worktree add "$WORKTREE_SRC_ROOT" "$BRANCH"
-ls .git/worktrees >"${new_worktrees_list}"
-WORKTREE_REFS_PATH=$(comm -13 "${old_worktrees_list}" "${new_worktrees_list}")
-
-echo "Worktree refs are at ${WORKTREE_REFS_PATH}"
-if [[ ! -d ".git/worktrees/${WORKTREE_REFS_PATH}" ]]; then
-   echo "Couldn't find new worktree git info at ${WORKTREE_REFS_PATH}"
-   exit 1
-fi
 
 cd "$WORKTREE_SRC_ROOT"
 mkdir -p .vscode

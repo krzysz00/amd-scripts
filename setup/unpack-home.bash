@@ -60,6 +60,7 @@ ln -sv "${repo_dir}/config/llvm-vscode-settings.json" .vscode/settings.json
 ln -sv "${repo_dir}/config/llvm-presets.json" llvm/CMakeUserPresets.json
 sed -e "s/#branch#/main/g" "${repo_dir}/config/llvm.code-workspace.template" >llvm-main.code-workspace
 git remote add fork git@github.com:$gh_user/llvm-project.git
+echo '/*.code-workspace' >>.git/info/exclude
 popd # src
 
 "${repo_dir}/bin/llvm-setup-environment" "$PWD"

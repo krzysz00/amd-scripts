@@ -16,7 +16,7 @@
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
         "LLVM_ENABLE_PROJECTS": {
           "type": "STRING",
-          "value": "mlir;lld"
+          "value": "mlir"
         },
         "CMAKE_C_COMPILER": {
           "type": "STRING",
@@ -37,6 +37,10 @@
         "LLVM_APPEND_VC_REV": {
           "type": "BOOL",
           "value": "OFF"
+        },
+        "LLVM_USE_SPLIT_DWARF": {
+          "type": "BOOL",
+          "value": "ON"
         },
         "LLVM_CCACHE_BUILD": {
           "type": "BOOL",

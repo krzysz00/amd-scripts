@@ -69,10 +69,6 @@
         "MLIR_INCLUDE_INTEGRATION_TESTS": {
           "type": "BOOL",
           "value": "OFF"
-        },
-        "LLD_BUILD_TOOLS": {
-          "type": "BOOL",
-          "value": "ON"
         }
       }
     },
@@ -97,6 +93,10 @@
         "LLVM_TARGETS_TO_BUILD": {
           "type": "STRING",
           "value": "all"
+        },
+        "LLD_BUILD_TOOLS": {
+          "type": "BOOL",
+          "value": "ON"
         },
         "MLIR_ENABLE_ROCM_RUNNER": {
           "type": "BOOL",

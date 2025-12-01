@@ -6,7 +6,7 @@ ARG EMACS_VERSION=30.2
 
 USER root
 WORKDIR /
-RUN usermod -m -d /home/kdrewnia -l kdrewnia ossci && \
+RUN usermod -s /usr/bin/zsh -m -d /home/kdrewnia -l kdrewnia ossci && \
     groupmod -n kdrewnia ossci && \
     sed -i -e 's/ossci/kdrewnia/' /etc/sudoers
 

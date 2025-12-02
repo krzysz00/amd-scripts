@@ -6,9 +6,10 @@ ARG EMACS_VERSION=30.2
 
 USER root
 WORKDIR /
-RUN usermod -s /usr/bin/zsh -m -d /home/kdrewnia -l kdrewnia ossci && \
+RUN usermod -m -d /home/kdrewnia -l kdrewnia ossci && \
     groupmod -n kdrewnia ossci && \
-    sed -i -e 's/ossci/kdrewnia/' /etc/sudoers
+    sed -i -e 's/ossci/kdrewnia/' /etc/sudoers && \
+    chsh -s /usr/bin/zsh kdrewnia
 
 # Get manpages back
 RUN yes | unminimize
@@ -16,8 +17,10 @@ RUN yes | unminimize
 # Last line is LLVM install script dependencies
 RUN apt-get install -y tmux ncurses-term \
     direnv rcm python-is-python3 \
+    lsyncd rsync \
+    man man-db zsh-doc \
     silversearcher-ag ripgrep \
-    zsh-doc build-essential \
+    build-essential jq \
     lsb-release wget software-properties-common gnupg
 
 RUN mkdir -p /opt/builds
@@ -46,6 +49,9 @@ RUN env CC=gcc-14 CFLAGS="-g3 -O3 -mtune=native" ./configure --with-libsystemd -
     make -j8 && \
     make install
 WORKDIR /opt/builds
+
+# Set up lsyncd config
+COPY lsyncd.conf /etc/lsyncd.conf
 
 USER kdrewnia
 WORKDIR /home/kdrewnia

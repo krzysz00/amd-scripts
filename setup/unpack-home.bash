@@ -24,7 +24,23 @@ gh_user=krzysz00
 
 git clone -b amd git@github.com/$gh_user/dotfiles.git .dotfiles
 git clone git@github.com/$gh_user/emacs.d.git .emacs.d
+# Clear out the empty zshrc
+[[ -f "$HOME/.zshrc" ]] && rm $HOME/.zshrc
 rcup
+
+is_slow_home=0
+"${repo_dir}/bin/is-slow-home" || is_slow_home=$?
+if [[ $is_slow_home -ne 0 ]]; then
+    echo "Redirecting source code to fast/..."
+    if [[ ! -d "$HOME/fast" ]] || [[ ! -d "$HOME/fast-persist" ]]; then
+        echo "Slow home infrastructure not prenent, aborting"
+        exit 1
+    fi
+    mkdir -p $HOME/fast/iree
+    mkdir -p $HOME/fast/llvm
+    ln -sv $HOME/fast/iree $HOME/iree
+    ln -sv $HOME/fast/llvm $HOME/llvm
+fi
 
 mkdir -p iree/main
 pushd iree/main
@@ -71,6 +87,11 @@ mkdir -p "$HOME/.config/ccache"
 echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
 echo "base_dir = $HOME" >>"$HOME/.config/ccache/ccache.conf"
 
+if [[ $is_slow_home -ne 0 ]]; then
+    echo "Using /tmp for cache, /home is slow"
+    echo "cache_dir = /tmp/ccache" >>"$HOME/.config/ccache/ccache.conf"
+fi
+
 echo "NVM and claude and such..."
 curl https://cursor.com/install -fsS | bash
 
@@ -83,6 +104,6 @@ nvm use 'lts/*'
 npm install -g @anthropic-ai/claude-code
 
 echo "Next steps"
-echo " - chsh # /usr/bin/zsh"
+echo " - chsh kdrewnia /usr/bin/zsh"
 echo " - import GPG key"
 echo " - pre-commit install in main IREE branch"

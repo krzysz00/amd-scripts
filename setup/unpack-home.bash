@@ -22,8 +22,8 @@ repo_dir=$(dirname -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")")
 
 gh_user=krzysz00
 
-git clone -b amd git@github.com/$gh_user/dotfiles.git .dotfiles
-git clone git@github.com/$gh_user/emacs.d.git .emacs.d
+git clone -b amd git@github.com:$gh_user/dotfiles.git .dotfiles
+git clone git@github.com:$gh_user/emacs.d.git .emacs.d
 # Clear out the empty zshrc
 [[ -f "$HOME/.zshrc" ]] && rm $HOME/.zshrc
 rcup
@@ -46,7 +46,7 @@ mkdir -p iree/main
 pushd iree/main
 
 echo "IREE..."
-git clone --recursive git@github.com/iree-org/iree.git src
+git clone --recursive git@github.com:iree-org/iree.git src
 pushd src
 git config commit.gpgsign true
 git config tag.gpgsign true
@@ -54,7 +54,7 @@ mkdir -p .vscode
 ln -sv "${repo_dir}/config/iree-vscode-settings.json" .vscode/settings.json
 ln -sv "${repo_dir}/config/iree-presets.json" CMakeUserPresets.json
 sed -e "s/#branch#/main/g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
-git remote add fork git@github.com/$gh_user/iree.git
+git remote add fork git@github.com:$gh_user/iree.git
 
 ecoh "Enable integration..."
 pushd third_party/llvm-project

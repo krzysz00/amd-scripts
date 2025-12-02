@@ -31,7 +31,7 @@ rcup
 
 is_slow_home=0
 "${repo_dir}/bin/is-slow-home" || is_slow_home=$?
-if [[ $is_slow_home -ne 0 ]]; then
+if [[ $is_slow_home -eq 0 ]]; then
     echo "Redirecting source code to fast/..."
     if [[ ! -d "$HOME/fast" ]] || [[ ! -d "$HOME/fast-persist" ]]; then
         echo "Slow home infrastructure not prenent, aborting"
@@ -88,7 +88,7 @@ mkdir -p "$HOME/.config/ccache"
 echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
 echo "base_dir = $HOME" >>"$HOME/.config/ccache/ccache.conf"
 
-if [[ $is_slow_home -ne 0 ]]; then
+if [[ $is_slow_home -eq 0 ]]; then
     echo "Using /tmp for cache, /home is slow"
     echo "cache_dir = /tmp/ccache" >>"$HOME/.config/ccache/ccache.conf"
 fi

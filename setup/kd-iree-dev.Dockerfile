@@ -16,7 +16,7 @@ RUN yes | unminimize
 
 # Last line is LLVM install script dependencies
 RUN apt-get install -y tmux ncurses-term \
-    direnv rcm python-is-python3 \
+    direnv rcm python-is-python3 keychain \
     lsyncd rsync \
     man man-db zsh-doc \
     silversearcher-ag ripgrep \

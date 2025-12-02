@@ -2,7 +2,7 @@
 
 set -euxo pipefail
 
-echo "Prerequisites: SSH key installed available"
+echo "Prerequisites: SSH key installed and available"
 
 check_command() {
     if ! command -v "$1" &>/dev/null; then
@@ -10,7 +10,7 @@ check_command() {
         exit 1
     fi
 }
-check_command rcm
+check_command rcup
 check_command curl
 check_command zsh
 check_command git

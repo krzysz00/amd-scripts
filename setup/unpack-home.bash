@@ -16,9 +16,10 @@ check_command zsh
 check_command git
 check_command direnv
 
-cd "$HOME"
 
 repo_dir=$(dirname -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")")
+
+cd "$HOME"
 
 gh_user=krzysz00
 

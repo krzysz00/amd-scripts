@@ -27,7 +27,7 @@ if git check-ref-format --branch "$BRANCH_OR_PATH" 2>/dev/null >/dev/null \
     WORKTREE_PATH=$(git worktree list --porcelain | grep -B2 "^branch refs/heads/$BRANCH_OR_PATH" | head -1 | cut -d ' ' -f 2)
 elif [[ -d "$BRANCH_OR_PATH" ]] && [[ -f "$BRANCH_OR_PATH/.git" ]]; then
     WORKTREE_PATH="${BRANCH_OR_PATH:a}"
-elif [[ -d "$BRANCH_OR_PATH/src" ]]; [[ -f "$BRANCH_OR_PATH/src/.git" ]]; then
+elif [[ -d "$BRANCH_OR_PATH/src" ]] && [[ -f "$BRANCH_OR_PATH/src/.git" ]]; then
     WORKTREE_PATH="$BRANCH_OR_PATH/src"
     WORKTREE_PATH="${WORKTREE_PATH:a}"
 elif [[ -f "$LLVMS/$BRANCH_OR_PATH/src/.git" ]]; then

@@ -1,0 +1,6 @@
+#compdef git-iree-worktree-create
+#description Create an IREE worktree
+
+_arguments \
+  ':branch name:__git_branch_names' \
+  ':worktree name:'

@@ -1,0 +1,6 @@
+#compdef git-llvm-worktree-create
+#description Create an LLVM worktree
+
+_arguments \
+  ':branch name:__git_branch_names' \
+  ':worktree name:'

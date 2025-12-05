@@ -57,7 +57,7 @@ ln -sv "${repo_dir}/config/iree-presets.json" CMakeUserPresets.json
 sed -e "s/#branch#/main/g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
 git remote add fork git@github.com:$gh_user/iree.git
 
-ecoh "Enable integration..."
+echo "Enable integration..."
 pushd third_party/llvm-project
 git remote add fork git@github.com:$gh_user/llvm-project.git
 git remote add upstream git@github.com:llvm/llvm-project.git

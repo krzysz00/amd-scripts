@@ -1,0 +1,5 @@
+#compdef git-iree-worktree-remove
+#description Remove an IREE worktree
+
+_arguments \
+  ':branch name:__git_branch_names'

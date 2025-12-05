@@ -27,7 +27,7 @@ if git check-ref-format --branch "$BRANCH_OR_PATH" 2>/dev/null >/dev/null \
     WORKTREE_PATH=$(git worktree list --porcelain | grep -B2 "^branch refs/heads/$BRANCH_OR_PATH" | head -1 | cut -d ' ' -f 2)
 elif [[ -d "$BRANCH_OR_PATH" ]] && [[ -f "$BRANCH_OR_PATH/.git" ]]; then
     WORKTREE_PATH="${BRANCH_OR_PATH:a}"
-elif [[ -d "$BRANCH_OR_PATH/src" ]]; [[ -f "$BRANCH_OR_PATH/src/.git" ]]; then
+elif [[ -d "$BRANCH_OR_PATH/src" ]] && [[ -f "$BRANCH_OR_PATH/src/.git" ]]; then
     WORKTREE_PATH="$BRANCH_OR_PATH/src"
     WORKTREE_PATH="${WORKTREE_PATH:a}"
 elif [[ -f "$IREES/$BRANCH_OR_PATH/src/.git" ]]; then
@@ -56,6 +56,6 @@ echo "Removing worktree $WORKTREE_PATH ..."
 git worktree remove "$WORKTREE_PATH"
 
 echo "Removing build and environment in ${WORKTREE_ENV} ..."
-rm -rf -- "${WORKTREE_ENV}/build" "${WORKTREE_ENV}/.direnv" "${WORKTREE_ENV}/.envrc" || true
+rm -rf -- "${WORKTREE_ENV}/build" "${WORKTREE_ENV}/.direnv" "${WORKTREE_ENV}/.envrc"  "${WORKTREE_PATH}/.cache" || true
 rmdir "${WORKTREE_ENV}" || echo "There's still something in the worktree"
 echo "Removed worktree $BRANCH_OR_PATH at $WORKTREE_ENV"

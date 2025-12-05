@@ -1,0 +1,5 @@
+#compdef git-llvm-worktree-remove
+#description Remove an LLVM worktree
+
+_arguments \
+  ':branch name:__git_branch_names'

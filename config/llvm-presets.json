@@ -24,7 +24,7 @@
         },
         "CMAKE_CXX_COMPILER": {
           "type": "STRING",
-          "value": "/usrc/bin/clang++"
+          "value": "/usr/bin/clang++"
         },
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",

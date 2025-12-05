@@ -16,6 +16,7 @@ fi
 pushd "$root_dir"
 if [[ ! -a "$root_dir/.envrc" ]]; then
     echo "layout python" >.envrc
+    echo "PATH-add $root_dir/build/bin" >>.envrc
     direnv allow .
 fi
 eval "$(direnv export zsh)"

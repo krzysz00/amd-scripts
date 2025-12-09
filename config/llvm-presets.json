@@ -58,6 +58,10 @@
           "type": "BOOL",
           "value": "ON"
         },
+        "HIP_PLATFORM": {
+          "type": "STRING",
+          "value": "amd"
+        },
         "MLIR_ENABLE_ROCM_CONVERSIONS": {
           "type": "BOOL",
           "value": "ON"

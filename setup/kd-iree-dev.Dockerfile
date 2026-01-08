@@ -11,8 +11,8 @@ RUN usermod -m -d /home/kdrewnia -l kdrewnia ossci && \
     sed -i -e 's/ossci/kdrewnia/' /etc/sudoers && \
     chsh -s /usr/bin/zsh kdrewnia
 
-# Get manpages back
-RUN yes | unminimize
+# Get manpages back - this is already in the main iree-dev now
+# RUN yes | unminimize
 
 # Last line is LLVM install script dependencies
 RUN apt-get install -y tmux ncurses-term \

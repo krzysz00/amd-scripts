@@ -34,6 +34,10 @@
           "type": "STRING",
           "value": "lld"
         },
+        "LLVM_ENABLE_ASSERTIONS": {
+          "type": "BOOL",
+          "value": "ON"
+        },
         "LLVM_APPEND_VC_REV": {
           "type": "BOOL",
           "value": "OFF"
@@ -101,6 +105,10 @@
         "MLIR_ENABLE_ROCM_RUNNER": {
           "type": "BOOL",
           "value": "ON"
+        },
+        "HIP_PLATFORM": {
+          "type": "STRING",
+          "value": "amd"
         },
         "MLIR_INCLUDE_INTEGRATION_TESTS": {
           "type": "BOOL",

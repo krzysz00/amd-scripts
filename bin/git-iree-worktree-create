@@ -57,11 +57,9 @@ mkdir -p .vscode
 
 git submodule --quiet init
 # Note: this dosen't create recursive submodules but it's fine since Torch
-# uses our copies
-for submodule in $(git config get --file=.gitmodules --all --regexp path); do
-    echo "Creating quasi-worktree of $submodule"
-    git submodule update --reference "$MAIN_IREE/$submodule" "$submodule"
-done
+# uses our copies.
+git config --file .gitmodules --name-only --get-regexp path | cut -f2 -d. | \
+  parallel --jobs 16 "echo 'Creating quasi-worktree of {}' && git submodule update --reference '$MAIN_IREE/{}' '{}'"
 
 # Set up a VS code workspace file through the magic of templates.
 sed -e "s/#branch#/$WORKTREE_NAME/g" "${SCRIPTS_ROOT}/config/iree.code-workspace.template" >"iree-${WORKTREE_NAME}.code-workspace"

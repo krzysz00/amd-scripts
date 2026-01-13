@@ -27,6 +27,9 @@ pip install -q pygments # LLVM needs this
 if [[ ! -a "$root_dir/src/compile_commands.json" ]]; then
     ln -s "$root_dir/build/compile_commands.json" "src/compile_commands.json"
 fi
+if [[ ! -a "$root_dir/src/tablegen_compile_commands.yml" ]]; then
+    ln -s "$root_dir/build/tablegen_compile_commands.yml" "src/tablegen_compile_commands.yml"
+fi
 
 echo "Set up LLVM build environment in $root_dir"
 popd

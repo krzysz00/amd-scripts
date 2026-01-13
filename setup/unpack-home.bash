@@ -87,6 +87,7 @@ echo "Ccache..."
 mkdir -p "$HOME/.config/ccache"
 echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
 echo "base_dir = $HOME" >>"$HOME/.config/ccache/ccache.conf"
+echo "sloppiness = include_file_mtime,include_file_ctime" >>"$HOME/.config/ccache/ccache.conf"
 
 if [[ $is_slow_home -eq 0 ]]; then
     echo "Using /tmp for cache, /home is slow"

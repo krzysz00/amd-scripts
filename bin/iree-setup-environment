@@ -20,7 +20,8 @@ if [[ ! -a "$root_dir/.envrc" ]]; then
 fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
-pip install -q numpy sympy ml_dtypes nanobind pre-commit
+uv pip install -q -r "$root_dir/src/runtime/bindings/python/iree/runtime/build_requirements.txt"
+uv pip install -q nanobind pre-commit
 
 if [[ ! -a "$root_dir/src/compile_commands.json" ]]; then
     ln -s "$root_dir/build/compile_commands.json" "src/compile_commands.json"

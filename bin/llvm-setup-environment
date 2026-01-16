@@ -14,15 +14,18 @@ if [[ ! -d "$root_dir/src/mlir" ]]; then
 fi
 
 pushd "$root_dir"
+if [[ -d "$root_dir/.direnv/python-uv" ]]; then
+    uv venv --python python3 "$root_dir/.direnv/python-uv"
+fi
 if [[ ! -a "$root_dir/.envrc" ]]; then
-    echo "layout python" >.envrc
-    echo "PATH_add $root_dir/build/bin" >>.envrc
+    echo 'export VIRTUAL_ENV=$(direnv_layout_dir)/python-uv' >.envrc
+    echo "PATH_add $root_dir/build/bin" '"${VIRTUAL_ENV}/bin"' >>.envrc
     direnv allow .
 fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
-pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
-pip install -q pygments # LLVM needs this
+uv pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
+uv pip install -q pygments # LLVM needs this
 
 if [[ ! -a "$root_dir/src/compile_commands.json" ]]; then
     ln -s "$root_dir/build/compile_commands.json" "src/compile_commands.json"

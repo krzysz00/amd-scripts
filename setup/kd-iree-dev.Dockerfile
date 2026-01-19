@@ -19,6 +19,7 @@ RUN apt-get install -y tmux ncurses-term \
     direnv rcm python-is-python3 keychain \
     lsyncd rsync \
     man man-db zsh-doc \
+    libstdc++-14-dev parallel \
     silversearcher-ag ripgrep \
     build-essential jq \
     lsb-release wget software-properties-common gnupg

@@ -43,7 +43,11 @@ if [[ $is_slow_home -eq 0 ]]; then
     ln -sv $HOME/fast/llvm $HOME/llvm
 fi
 
-if [[ -e iree/main/.direnv ]]; then
+echo "UV..."
+curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
+export PATH="$HOME/.local/bin:$PATH"
+
+if [[ ! -e iree/main/.direnv ]]; then
   mkdir -p iree/main
   pushd iree/main
 
@@ -70,7 +74,7 @@ if [[ -e iree/main/.direnv ]]; then
   popd #iree/main
 fi
 
-if [[ ! -d llvm/main/.direnv ]]; then;
+if [[ ! -e llvm/main/.direnv ]]; then
   echo "LLVM upstream"
   mkdir -p llvm/main
   pushd llvm/main
@@ -110,9 +114,6 @@ source "$HOME/.nvm/nvm.sh"
 nvm install 'lts/*'
 nvm use 'lts/*'
 npm install -g @anthropic-ai/claude-code
-
-echo "UV...
-curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh"
 
 echo "Next steps"
 echo " - chsh kdrewnia /usr/bin/zsh"

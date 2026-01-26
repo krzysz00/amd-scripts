@@ -21,5 +21,6 @@
     "cmake.sourceDirectory": "${workspaceFolder}/llvm",
     "cmake.useCMakePresets": "always",
     "editor.tabSize": 2,
-    "mlir.server_path": "build/bin/mlir-lsp-server"
+    "mlir.server_path": "../build/bin/mlir-lsp-server",
+    "mlir.tablegen_server_path": "../build/bin/tablegen-lsp-server"
 }

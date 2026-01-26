@@ -49,6 +49,6 @@ echo "Removing worktree $WORKTREE_PATH ..."
 git worktree remove "$WORKTREE_PATH"
 
 echo "Removing build and environment in ${WORKTREE_ENV} ..."
-rm -rf -- "${WORKTREE_ENV}/build" "${WORKTREE_ENV}/.direnv" "${WORKTREE_ENV}/.envrc" "${WORKTREE_ENV}/.cache" || true
+rm -rf -- "${WORKTREE_ENV}/build" "${WORKTREE_ENV}/.direnv" "${WORKTREE_ENV}/.envrc" "${WORKTREE_ENV}/.cache" "${WORKTREE_ENV}/CLAUDE.md" || true
 rmdir "${WORKTREE_ENV}" || echo "There's still something in the worktree"
 echo "Removed worktree $BRANCH_OR_PATH at $WORKTREE_ENV"

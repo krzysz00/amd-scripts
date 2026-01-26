@@ -54,6 +54,7 @@ cd "$WORKTREE_SRC_ROOT"
 mkdir -p .vscode
 [[ -d .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/iree-vscode-settings.json" ".vscode/settings.json"
 [[ -a CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/iree-presets.json" CMakeUserPresets.json
+[[ -a ../CLAUDE.md ]] || cp "${SCRIPTS_ROOT}/config/iree-CLAUDE.md" "../CLAUDE.md"
 
 git submodule --quiet init
 # Note: this dosen't create recursive submodules but it's fine since Torch

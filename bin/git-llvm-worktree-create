@@ -53,6 +53,7 @@ cd "$WORKTREE_SRC_ROOT"
 mkdir -p .vscode
 [[ -a .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-vscode-settings.json" ".vscode/settings.json"
 [[ -a llvm/CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-presets.json" llvm/CMakeUserPresets.json
+[[ -a ../CLAUDE.md ]] || cp "${SCRIPTS_ROOT}/config/llvm-CLAUDE.md" "../CLAUDE.md"
 
 # Set up a VS code workspace file through the magic of templates.
 sed -e "s/#branch#/$WORKTREE_NAME/g" "${SCRIPTS_ROOT}/config/llvm.code-workspace.template" >"llvm-${WORKTREE_NAME}.code-workspace"

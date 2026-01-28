@@ -115,7 +115,7 @@ PROFILE=/dev/null bash -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm
 source "$HOME/.nvm/nvm.sh"
 nvm install 'lts/*'
 nvm use 'lts/*'
-npm install -g @anthropic-ai/claude-code
+curl -fsSL https://claude.ai/install.sh | bash
 
 echo "Next steps"
 echo " - chsh kdrewnia /usr/bin/zsh"

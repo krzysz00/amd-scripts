@@ -7,6 +7,8 @@
     }
   ],
   "settings": {
+    "mlir.server_path": "#rootPath#/build/bin/mlir-lsp-server",
+    "mlir.tablegen_server_path": "#rootPath#/build/bin/tablegen-lsp-server",
     "window.title": "${dirty}${activeEditorShort}${separator}#branch#${separator}llvm${separator}${remoteName}${separator}${profileName}"
   }
 }

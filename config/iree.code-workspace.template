@@ -7,6 +7,8 @@
     }
   ],
   "settings": {
+    "mlir.server_path": "#rootPath#/build/tools/iree-mlir-lsp-server",
+    "mlir.tablegen_server_path": "#rootPath#/build/llvm-project/bin/tblgen-lsp-server",
     "window.title": "${dirty}${activeEditorShort}${separator}#branch#${separator}iree${separator}${remoteName}${separator}${profileName}"
   }
 }

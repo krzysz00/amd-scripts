@@ -16,6 +16,7 @@ check_command zsh
 check_command git
 check_command direnv
 check_command parallel
+check_command ccache
 
 repo_dir=$(dirname -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")")
 
@@ -95,9 +96,10 @@ if [[ ! -e llvm/main/.direnv ]]; then
 
 echo "Ccache..."
 mkdir -p "$HOME/.config/ccache"
-echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
-echo "base_dir = $HOME" >>"$HOME/.config/ccache/ccache.conf"
-echo "sloppiness = include_file_mtime,include_file_ctime" >>"$HOME/.config/ccache/ccache.conf"
+[[-f "$HOME/.config/ccache/ccache.conf"]] || echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
+ccache --set-config "base_dir=$HOME"
+ccache --set-config "sloppiness=include_file_mtime,include_file_ctime"
+ccache --set-config "hash_dir=false"
 
 if [[ $is_slow_home -eq 0 ]]; then
     echo "Using /tmp for cache, /home is slow"

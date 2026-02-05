@@ -3,32 +3,32 @@
 set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
-   echo "Usage: $0 [root directory]"
-   exit 1
+  echo "Usage: $0 [root directory]"
+  exit 1
 fi
 
 root_dir="$1"
 if [[ ! -d "$root_dir/src/mlir" ]]; then
-    echo "Error: expected $root_dir to heuristically be an LLVM checkout"
-    exit 1
+  echo "Error: expected $root_dir to heuristically be an LLVM checkout"
+  exit 1
 fi
 
 pushd "$root_dir"
-if [[ ! -a "$root_dir/.envrc" ]]; then
-    echo "layout uv" >.envrc
-    echo "PATH_add $root_dir/build/bin" >>.envrc
-    direnv allow .
+if [[ ! -e "$root_dir/.envrc" ]]; then
+  echo "layout uv" >.envrc
+  echo "PATH_add $root_dir/build/bin" >>.envrc
+  direnv allow .
 fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
 uv pip install -q pygments # LLVM needs this
 
-if [[ ! -a "$root_dir/compile_commands.json" ]]; then
-    ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"
+if [[ ! -e "$root_dir/compile_commands.json" ]]; then
+  ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"
 fi
-if [[ ! -a "$root_dir/tablegen_compile_commands.yml" ]]; then
-    ln -s "$root_dir/build/tablegen_compile_commands.yml" "tablegen_compile_commands.yml"
+if [[ ! -e "$root_dir/tablegen_compile_commands.yml" ]]; then
+  ln -s "$root_dir/build/tablegen_compile_commands.yml" "tablegen_compile_commands.yml"
 fi
 
 echo "Set up LLVM build environment in $root_dir"

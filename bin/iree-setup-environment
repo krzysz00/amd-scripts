@@ -3,31 +3,31 @@
 set -euo pipefail
 
 if [[ $# -lt 1 ]]; then
-   echo "Usage: $0 [root directory]"
-   exit 1
+  echo "Usage: $0 [root directory]"
+  exit 1
 fi
 
 root_dir="$1"
 if [[ ! -d "$root_dir/src/compiler" ]]; then
-    echo "Error: expected $root_dir to heuristically be an IREE checkout"
-    exit 1
+  echo "Error: expected $root_dir to heuristically be an IREE checkout"
+  exit 1
 fi
 
 pushd "$root_dir"
-if [[ ! -a "$root_dir/.envrc" ]]; then
-    echo "use iree $root_dir $root_dir/build python3 $root_dir/src" >.envrc
-    direnv allow .
+if [[ ! -e "$root_dir/.envrc" ]]; then
+  echo "use iree $root_dir $root_dir/build python3 $root_dir/src" >.envrc
+  direnv allow .
 fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/src/runtime/bindings/python/iree/runtime/build_requirements.txt"
 uv pip install -q nanobind pre-commit
 
-if [[ ! -a "$root_dir/compile_commands.json" ]]; then
-    ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"
+if [[ ! -e "$root_dir/compile_commands.json" ]]; then
+  ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"
 fi
-if [[ ! -a "$root_dir/tablegen_compile_commands.yml" ]]; then
-    ln -s "$root_dir/build/tablegen_compile_commands.yml" "tablegen_compile_commands.yml"
+if [[ ! -e "$root_dir/tablegen_compile_commands.yml" ]]; then
+  ln -s "$root_dir/build/tablegen_compile_commands.yml" "tablegen_compile_commands.yml"
 fi
 
 echo "Set up IREE build envoronment in $root_dir"

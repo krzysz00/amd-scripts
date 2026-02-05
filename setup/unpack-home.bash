@@ -5,10 +5,10 @@ set -euxo pipefail
 echo "Prerequisites: SSH key installed and available"
 
 check_command() {
-    if ! command -v "$1" &>/dev/null; then
-        echo "Missing \`$1\` - setup incomplete"
-        exit 1
-    fi
+  if ! command -v "$1" &>/dev/null; then
+    echo "Missing \`$1\` - setup incomplete"
+    exit 1
+  fi
 }
 check_command rcup
 check_command curl
@@ -33,15 +33,15 @@ rcup
 is_slow_home=0
 "${repo_dir}/bin/is-slow-home" || is_slow_home=$?
 if [[ $is_slow_home -eq 0 ]]; then
-    echo "Redirecting source code to fast/..."
-    if [[ ! -d "$HOME/fast" ]] || [[ ! -d "$HOME/fast-persist" ]]; then
-        echo "Slow home infrastructure not prenent, aborting"
-        exit 1
-    fi
-    mkdir -p $HOME/fast/iree
-    mkdir -p $HOME/fast/llvm
-    ln -sv $HOME/fast/iree $HOME/iree
-    ln -sv $HOME/fast/llvm $HOME/llvm
+  echo "Redirecting source code to fast/..."
+  if [[ ! -d "$HOME/fast" ]] || [[ ! -d "$HOME/fast-persist" ]]; then
+    echo "Slow home infrastructure not prenent, aborting"
+    exit 1
+  fi
+  mkdir -p $HOME/fast/iree
+  mkdir -p $HOME/fast/llvm
+  ln -sv $HOME/fast/iree $HOME/iree
+  ln -sv $HOME/fast/llvm $HOME/llvm
 fi
 
 echo "UV..."
@@ -90,9 +90,9 @@ if [[ ! -e llvm/main/.direnv ]]; then
     echo '/*.code-workspace' >>.git/info/exclude
     popd # src
   fi
-   "${repo_dir}/bin/llvm-setup-environment" "$PWD"
-   popd # llvm/main
- fi
+  "${repo_dir}/bin/llvm-setup-environment" "$PWD"
+  popd # llvm/main
+fi
 
 echo "Ccache..."
 mkdir -p "$HOME/.config/ccache"
@@ -102,8 +102,8 @@ ccache --set-config "sloppiness=include_file_mtime,include_file_ctime"
 ccache --set-config "hash_dir=false"
 
 if [[ $is_slow_home -eq 0 ]]; then
-    echo "Using /tmp for cache, /home is slow"
-    echo "cache_dir = /tmp/ccache" >>"$HOME/.config/ccache/ccache.conf"
+  echo "Using /tmp for cache, /home is slow"
+  echo "cache_dir = /tmp/ccache" >>"$HOME/.config/ccache/ccache.conf"
 fi
 
 echo "NVM and claude and such..."

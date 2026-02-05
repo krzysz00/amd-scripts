@@ -3,20 +3,20 @@
 set -euo pipefail
 
 if [[ -z $VIRTUAL_ENV ]]; then
-    echo "Not in a virtual environment, refusing to run"
-    exit 1
+  echo "Not in a virtual environment, refusing to run"
+  exit 1
 fi
 
 declare build_dir
 if [[ -x "$PWD/tools/iree-opt" ]]; then
-    build_dir="$PWD"
+  build_dir="$PWD"
 elif [[ -f "${PWD:h}/build/tools/iree-opt" ]]; then
-    build_dir="${PWD:h}/build"
+  build_dir="${PWD:h}/build"
 elif [[ -f "$PWD/build/tools-iree-opt" ]]; then
-    build_dir="$PWD/build"
+  build_dir="$PWD/build"
 else
-    echo "Can't find a built IREE"
-    exit 1
+  echo "Can't find a built IREE"
+  exit 1
 fi
 
 cd "$build_dir"

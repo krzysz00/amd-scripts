@@ -24,11 +24,11 @@ echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/src/mlir/python/requirements.txt"
 uv pip install -q pygments # LLVM needs this
 
-if [[ ! -a "$root_dir/src/compile_commands.json" ]]; then
-    ln -s "$root_dir/build/compile_commands.json" "src/compile_commands.json"
+if [[ ! -a "$root_dir/compile_commands.json" ]]; then
+    ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"
 fi
-if [[ ! -a "$root_dir/src/tablegen_compile_commands.yml" ]]; then
-    ln -s "$root_dir/build/tablegen_compile_commands.yml" "src/tablegen_compile_commands.yml"
+if [[ ! -a "$root_dir/tablegen_compile_commands.yml" ]]; then
+    ln -s "$root_dir/build/tablegen_compile_commands.yml" "tablegen_compile_commands.yml"
 fi
 
 echo "Set up LLVM build environment in $root_dir"

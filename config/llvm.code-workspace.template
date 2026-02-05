@@ -2,13 +2,16 @@
   "name": "LLVM #branch#",
   "folders": [
     {
-      "path": ".",
+      "path": "./src",
       "name": "#branch# llvm"
     }
   ],
   "settings": {
     "mlir.server_path": "#rootPath#/build/bin/mlir-lsp-server",
     "mlir.tablegen_server_path": "#rootPath#/build/bin/tblgen-lsp-server",
+    "mlir.tablegen_compilation_databases": [
+      "#rootPath#/tablegen_compile_commands.yml"
+    ],
     "window.title": "${dirty}${activeEditorShort}${separator}#branch#${separator}llvm${separator}${remoteName}${separator}${profileName}"
   }
 }

@@ -2,13 +2,16 @@
   "name": "IREE #branch#",
   "folders": [
     {
-      "path": ".",
+      "path": "./src",
       "name": "#branch# iree"
     }
   ],
   "settings": {
     "mlir.server_path": "#rootPath#/build/tools/iree-mlir-lsp-server",
     "mlir.tablegen_server_path": "#rootPath#/build/llvm-project/bin/tblgen-lsp-server",
+    "mlir.tablegen_compilation_databases": [
+      "#rootPath#/tablegen_compile_commands.yml"
+    ],
     "window.title": "${dirty}${activeEditorShort}${separator}#branch#${separator}iree${separator}${remoteName}${separator}${profileName}"
   }
 }

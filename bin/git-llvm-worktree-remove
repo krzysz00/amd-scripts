@@ -4,7 +4,9 @@ set -euo pipefail
 
 LLVMS="$HOME/llvm"
 MAIN_LLVM="$LLVMS/main/src"
-#SCRIPTS_ROOT="${0:a:h:h}"
+SCRIPTS_ROOT="${0:a:h:h}"
+
+source "${SCRIPTS_ROOT}/utils/worktree-functions.sh"
 
 if [[ ! -d $MAIN_LLVM ]]; then
     echo "No main LLVM repository in the expected place"
@@ -48,7 +50,4 @@ cd "$MAIN_LLVM"
 echo "Removing worktree $WORKTREE_PATH ..."
 git worktree remove "$WORKTREE_PATH"
 
-echo "Removing build and environment in ${WORKTREE_ENV} ..."
-rm -rf -- "${WORKTREE_ENV}/build" "${WORKTREE_ENV}/.direnv" "${WORKTREE_ENV}/.envrc" "${WORKTREE_ENV}/.cache" "${WORKTREE_ENV}/CLAUDE.md" || true
-rmdir "${WORKTREE_ENV}" || echo "There's still something in the worktree"
-echo "Removed worktree $BRANCH_OR_PATH at $WORKTREE_ENV"
+cleanup_worktree_env "$WORKTREE_ENV" "$BRANCH_OR_PATH"

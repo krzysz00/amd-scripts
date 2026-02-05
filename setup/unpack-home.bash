@@ -27,7 +27,7 @@ gh_user=krzysz00
 [[ -e .dotfiles ]] || git clone -b amd git@github.com:$gh_user/dotfiles.git .dotfiles
 [[ -e amd-scripts ]] || git clone git@github.com:$gh_user/emacs.d.git .emacs.d
 # Clear out the empty zshrc
-[[ -f "$HOME/.zshrc" ]] && rm $HOME/.zshrc
+[[ -f "$HOME/.zshrc" ]] && rm "$HOME/.zshrc"
 rcup
 
 is_slow_home=0
@@ -38,10 +38,10 @@ if [[ $is_slow_home -eq 0 ]]; then
     echo "Slow home infrastructure not prenent, aborting"
     exit 1
   fi
-  mkdir -p $HOME/fast/iree
-  mkdir -p $HOME/fast/llvm
-  ln -sv $HOME/fast/iree $HOME/iree
-  ln -sv $HOME/fast/llvm $HOME/llvm
+  mkdir -p "$HOME/fast/iree"
+  mkdir -p "$HOME/fast/llvm"
+  ln -sv "$HOME/fast/iree" "$HOME/iree"
+  ln -sv "$HOME/fast/llvm" "$HOME/llvm"
 fi
 
 echo "UV..."
@@ -96,7 +96,7 @@ fi
 
 echo "Ccache..."
 mkdir -p "$HOME/.config/ccache"
-[[-f "$HOME/.config/ccache/ccache.conf"]] || echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
+[[ -f "$HOME/.config/ccache/ccache.conf" ]] || echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
 ccache --set-config "base_dir=$HOME"
 ccache --set-config "sloppiness=include_file_mtime,include_file_ctime"
 ccache --set-config "hash_dir=false"

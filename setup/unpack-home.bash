@@ -61,7 +61,6 @@ if [[ ! -e iree/main/.direnv ]]; then
     mkdir -p .vscode
     ln -sv "${repo_dir}/config/iree-vscode-settings.json" .vscode/settings.json
     ln -sv "${repo_dir}/config/iree-presets.json" CMakeUserPresets.json
-    sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/iree/main!g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
     git remote add fork git@github.com:$gh_user/iree.git
 
     echo "Enable integration..."
@@ -71,6 +70,7 @@ if [[ ! -e iree/main/.direnv ]]; then
     popd # third_party/llvm-project
     popd #src
   fi
+  sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/iree/main!g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
   "${repo_dir}/bin/iree-setup-environment" "$PWD"
   popd #iree/main
 fi
@@ -85,11 +85,11 @@ if [[ ! -e llvm/main/.direnv ]]; then
     mkdir -p .vscode
     ln -sv "${repo_dir}/config/llvm-vscode-settings.json" .vscode/settings.json
     ln -sv "${repo_dir}/config/llvm-presets.json" llvm/CMakeUserPresets.json
-    sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/llvm/main!g" "${repo_dir}/config/llvm.code-workspace.template" >llvm-main.code-workspace
     git remote add fork git@github.com:$gh_user/llvm-project.git
     echo '/*.code-workspace' >>.git/info/exclude
     popd # src
   fi
+  sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/llvm/main!g" "${repo_dir}/config/llvm.code-workspace.template" >llvm-main.code-workspace
   "${repo_dir}/bin/llvm-setup-environment" "$PWD"
   popd # llvm/main
 fi

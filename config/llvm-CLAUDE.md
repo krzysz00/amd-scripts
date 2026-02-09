@@ -64,7 +64,7 @@ Do NOT use compiler tools (`mlir-opt`, `llc`, etc.) from PATH - use those in `bu
 
 ### Adding tests
 
-- MLIR and LLVM use lit to test compiler transformatins
+- MLIR and LLVM use lit to test compiler transformations
 -  When adding LLVM tests, do NOT write `CHECK` lines yourself. Use the update scripts in `llvm/utils/`
 - When adding MLIR tests, DO generate CHECK lines yourself. When doing this, follow the style of existing CHECK lines if they are present.
 

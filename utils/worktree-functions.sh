@@ -11,6 +11,7 @@ cleanup_worktree_env() {
               "${worktree_env}/.direnv" \
               "${worktree_env}/.envrc" \
               "${worktree_env}/.cache" \
+              "${worktree_env}/.claude" \
               "${worktree_env}/CLAUDE.md" \
               "${worktree_env}/compile_commands.json" \
               "${worktree_env}/tablegen_compile_commands.yml" \

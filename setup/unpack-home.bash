@@ -53,9 +53,9 @@ if [[ ! -e iree/main/.direnv ]]; then
   pushd iree/main
 
   echo "IREE..."
-  if [[ ! -d src ]]; then
-    git clone --recursive git@github.com:iree-org/iree.git src
-    pushd src
+  if [[ ! -d iree ]]; then
+    git clone --recursive git@github.com:iree-org/iree.git
+    pushd iree
     git config commit.gpgsign true
     git config tag.gpgsign true
     mkdir -p .vscode
@@ -68,7 +68,7 @@ if [[ ! -e iree/main/.direnv ]]; then
     git remote add fork git@github.com:$gh_user/llvm-project.git
     git remote add upstream git@github.com:llvm/llvm-project.git
     popd # third_party/llvm-project
-    popd #src
+    popd #iree
   fi
   sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/iree/main!g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
   "${repo_dir}/bin/iree-setup-environment" "$PWD"
@@ -79,15 +79,15 @@ if [[ ! -e llvm/main/.direnv ]]; then
   echo "LLVM upstream"
   mkdir -p llvm/main
   pushd llvm/main
-  if [[ ! -d src ]]; then
-    git clone git@github.com:llvm/llvm-project.git src
-    pushd src
+  if [[ ! -d llvm-project ]]; then
+    git clone git@github.com:llvm/llvm-project.git
+    pushd llvm-project
     mkdir -p .vscode
     ln -sv "${repo_dir}/config/llvm-vscode-settings.json" .vscode/settings.json
     ln -sv "${repo_dir}/config/llvm-presets.json" llvm/CMakeUserPresets.json
     git remote add fork git@github.com:$gh_user/llvm-project.git
     echo '/*.code-workspace' >>.git/info/exclude
-    popd # src
+    popd # llvm-project
   fi
   sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/llvm/main!g" "${repo_dir}/config/llvm.code-workspace.template" >llvm-main.code-workspace
   "${repo_dir}/bin/llvm-setup-environment" "$PWD"

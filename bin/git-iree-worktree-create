@@ -3,7 +3,8 @@
 set -euo pipefail
 
 IREES="$HOME/iree"
-MAIN_IREE="$IREES/main/src"
+REPO_NAME="iree"
+MAIN_IREE="$IREES/main/$REPO_NAME"
 SCRIPTS_ROOT="${0:a:h:h}"
 
 if [[ ! -d $MAIN_IREE ]]; then
@@ -15,7 +16,7 @@ if [[ $# -lt 1 ]]; then
     echo "Usage: $0 <branch name> [tree name]"
     echo ""
     echo "Create a worktree based off of [branch name], creating it if"
-    echo "it doesn't exist. The worktree is created at ~/iree/[tree name]/src"
+    echo "it doesn't exist. The worktree is created at ~/iree/[tree name]/$REPO_NAME"
     echo "where [tree name] defaults to <branch name> with the stacking PR bits"
     echo "removed. It then sets up submodules to copy off of the main checkout"
     echo "and creates a VS code workspace file. (Modelled on Ben's, who got his"
@@ -32,7 +33,7 @@ else
 fi
 
 WORKTREE_ROOT="$IREES/$WORKTREE_NAME"
-WORKTREE_SRC_ROOT="$WORKTREE_ROOT/src"
+WORKTREE_SRC_ROOT="$WORKTREE_ROOT/$REPO_NAME"
 if [[ -d "$WORKTREE_ROOT" ]]; then
     echo "Will not overwrite existing worktree: $WORKTREE_ROOT"
     exit 1

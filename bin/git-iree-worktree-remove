@@ -3,7 +3,8 @@
 set -euo pipefail
 
 IREES="$HOME/iree"
-MAIN_IREE="$IREES/main/src"
+REPO_NAME="iree"
+MAIN_IREE="$IREES/main/$REPO_NAME"
 SCRIPTS_ROOT="${0:a:h:h}"
 
 source "${SCRIPTS_ROOT}/utils/worktree-functions.sh"
@@ -28,15 +29,15 @@ if git check-ref-format --branch "$BRANCH_OR_PATH" 2>/dev/null >/dev/null \
         && git worktree list --porcelain | grep -q "^branch refs/heads/$BRANCH_OR_PATH"; then
     WORKTREE_PATH=$(git worktree list --porcelain | grep -B2 "^branch refs/heads/$BRANCH_OR_PATH" | head -1 | cut -d ' ' -f 2)
 elif [[ -d "$BRANCH_OR_PATH" ]] && [[ -f "$BRANCH_OR_PATH/.git" ]]; then
-    WORKTREE_PATH="${BRANCH_OR_PATH:a}"
-elif [[ -d "$BRANCH_OR_PATH/src" ]] && [[ -f "$BRANCH_OR_PATH/src/.git" ]]; then
-    WORKTREE_PATH="$BRANCH_OR_PATH/src"
-    WORKTREE_PATH="${WORKTREE_PATH:a}"
-elif [[ -f "$IREES/$BRANCH_OR_PATH/src/.git" ]]; then
-    WORKTREE_PATH="$IREES/$BRANCH_OR_PATH/src"
+  WORKTREE_PATH="${BRANCH_OR_PATH:a}"
+elif [[ -d "$BRANCH_OR_PATH/$REPO_NAME" ]] && [[ -f "$BRANCH_OR_PATH/$REPO_NAME/.git" ]]; then
+  WORKTREE_PATH="$BRANCH_OR_PATH/$REPO_NAME"
+  WORKTREE_PATH="${WORKTREE_PATH:a}"
+elif [[ -f "$IREES/$BRANCH_OR_PATH/$REPO_NAME/.git" ]]; then
+  WORKTREE_PATH="$IREES/$BRANCH_OR_PATH/$REPO_NAME"
 else
-    echo "Could not find worktree for branch/path: $BRANCH_OR_PATH"
-    exit 1
+  echo "Could not find worktree for branch/path: $BRANCH_OR_PATH"
+  exit 1
 fi
 
 if [[ ! -d "$WORKTREE_PATH" ]]; then

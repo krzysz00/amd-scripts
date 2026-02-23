@@ -3,7 +3,8 @@
 set -euo pipefail
 
 LLVMS="$HOME/llvm"
-MAIN_LLVM="$LLVMS/main/src"
+REPO_NAME="llvm-project"
+MAIN_LLVM="$LLVMS/main/$REPO_NAME"
 SCRIPTS_ROOT="${0:a:h:h}"
 
 if [[ ! -d $MAIN_LLVM ]]; then
@@ -15,7 +16,7 @@ if [[ $# -lt 1 ]]; then
     echo "Usage: $0 <branch name> [tree name]"
     echo ""
     echo "Create a worktree based off of [branch name], creating it if"
-    echo "it doesn't exist. The worktree is created at ~/llvm/[tree name]/src"
+    echo "it doesn't exist. The worktree is created at ~/llvm/[tree name]/$REPO_NAME"
     echo "where [tree name] defaults to <branch name> with the stacking PR bits"
     echo "removed. It then sets up a Python environment and creates a VS code"
     echo "workspace file."
@@ -31,7 +32,7 @@ else
 fi
 
 WORKTREE_ROOT="$LLVMS/$WORKTREE_NAME"
-WORKTREE_SRC_ROOT="$WORKTREE_ROOT/src"
+WORKTREE_SRC_ROOT="$WORKTREE_ROOT/$REPO_NAME"
 if [[ -d "$WORKTREE_ROOT" ]]; then
     echo "Will not overwrite existing worktree: $WORKTREE_ROOT"
     exit 1

@@ -36,7 +36,7 @@ For ANY task: run verification commands, show the output, let the data prove the
 
 ## Working Environment
 
-This workspace contains IREE code in `src/`, and the build is in `build/`.
+This workspace contains IREE code in `iree/`, and the build is in `build/`.
 
 **Note:** Always keep detailed notes of your progress and plans in organized markdown files. Any temporary notes/dumps can be placed in `claude_tmp/` under the working directory.
 
@@ -47,21 +47,21 @@ This workspace contains IREE code in `src/`, and the build is in `build/`.
 **Configure build:** (if there is no `build/` or you have changed CMake configuration.)
 
 ```bash
-cd src/ && cmake --preset=default
+cd iree/ && cmake --preset=default
 ```
 
-(You make explore `src/CMakeUserPresets.json` for other available configurations)
+(You may explore `iree/CMakeUserPresets.json` for other available configurations)
 
 ### Build
 ```bash
-cd src/ && cmake --build --preset=default
+cd iree/ && cmake --build --preset=default
 ```
 
 ### Run tests
 ```bash
-cd src/ && ctest --preset=default
+cd iree/ && ctest --preset=default
 # Skip end-to-end tests
-cd src/ && ctest --preset=no-e2e
+cd iree/ && ctest --preset=no-e2e
 ```
 
 Do NOT use compiler tools (`iree-opt`, `mlir-opt`, etc.) from PATH - use those in `build/bin` instead.

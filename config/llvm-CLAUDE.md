@@ -32,7 +32,7 @@ For ANY task: run verification commands, show the output, let the data prove the
 
 ## Working Environment
 
-This workspace contains LLVM/MLIR code in `src/`, and the build is in `build`.
+This workspace contains LLVM/MLIR code in `llvm-project/`, and the build is in `build`.
 
 **Note:** Always keep detailed notes of your progress and plans in organized markdown files. Any temporary notes/dumps can be placed in `claude_tmp/` under the working directory.
 
@@ -43,10 +43,10 @@ This workspace contains LLVM/MLIR code in `src/`, and the build is in `build`.
 **Configure build:** (if there is no `build/` or you have changed CMake configuration.)
 
 ```bash
-cd src/llvm && cmake --preset=default
+cd llvm-project/llvm && cmake --preset=default
 ```
 
-(You make explore `src/llvm/CMakeUserPresets.json` for other available configurations)
+(You may explore `llvm-project/llvm/CMakeUserPresets.json` for other available configurations)
 
 ### Build and test MLIR
 ```bash

@@ -8,19 +8,19 @@ if [[ $# -lt 1 ]]; then
 fi
 
 root_dir="$1"
-if [[ ! -d "$root_dir/src/compiler" ]]; then
+if [[ ! -d "$root_dir/iree/compiler" ]]; then
   echo "Error: expected $root_dir to heuristically be an IREE checkout"
   exit 1
 fi
 
 pushd "$root_dir"
 if [[ ! -e "$root_dir/.envrc" ]]; then
-  echo "use iree $root_dir $root_dir/build python3 $root_dir/src" >.envrc
+  echo "use iree $root_dir $root_dir/build python3 $root_dir/iree" >.envrc
   direnv allow .
 fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
-uv pip install -q -r "$root_dir/src/runtime/bindings/python/iree/runtime/build_requirements.txt"
+uv pip install -q -r "$root_dir/iree/runtime/bindings/python/iree/runtime/build_requirements.txt"
 uv pip install -q nanobind pre-commit
 
 if [[ ! -e "$root_dir/compile_commands.json" ]]; then

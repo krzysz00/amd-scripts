@@ -2,7 +2,7 @@
   "name": "LLVM #branch#",
   "folders": [
     {
-      "path": "./src",
+      "path": "./llvm-project",
       "name": "#branch# llvm"
     }
   ],

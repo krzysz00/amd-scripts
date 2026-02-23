@@ -2,7 +2,7 @@
   "name": "IREE #branch#",
   "folders": [
     {
-      "path": "./src",
+      "path": "./iree",
       "name": "#branch# iree"
     }
   ],

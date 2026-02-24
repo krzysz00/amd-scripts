@@ -58,4 +58,4 @@ echo "Removing worktree $WORKTREE_PATH ..."
 # Now that we've cleaned out the submodules, no need for force
 git worktree remove "$WORKTREE_PATH"
 
-cleanup_worktree_env "$WORKTREE_ENV" "$BRANCH_OR_PATH"
+cleanup_worktree_env "$WORKTREE_ENV" "$BRANCH_OR_PATH" "${SCRIPTS_ROOT}/config/iree-workspace-seed"

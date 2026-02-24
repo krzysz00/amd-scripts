@@ -7,6 +7,8 @@ REPO_NAME="llvm-project"
 MAIN_LLVM="$LLVMS/main/$REPO_NAME"
 SCRIPTS_ROOT="${0:a:h:h}"
 
+source "${SCRIPTS_ROOT}/utils/worktree-functions.sh"
+
 if [[ ! -d $MAIN_LLVM ]]; then
     echo "No main LLVM repository in the expected place"
     exit 1
@@ -54,13 +56,10 @@ cd "$WORKTREE_SRC_ROOT"
 mkdir -p .vscode
 [[ -a .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-vscode-settings.json" ".vscode/settings.json"
 [[ -a llvm/CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-presets.json" llvm/CMakeUserPresets.json
-[[ -a ../CLAUDE.md ]] || cp "${SCRIPTS_ROOT}/config/llvm-CLAUDE.md" "../CLAUDE.md"
 
-# Set up a VS code workspace file through the magic of templates.
-sed -e "s/#branch#/$WORKTREE_NAME/g" -e "s!#rootPath#!${WORKTREE_ROOT}!g" "${SCRIPTS_ROOT}/config/llvm.code-workspace.template" >"../llvm-${WORKTREE_NAME}.code-workspace"
+cd "$WORKTREE_ROOT"
 
-echo "Creating virtual environment ..."
-"${SCRIPTS_ROOT}/bin/llvm-setup-environment" "$WORKTREE_ROOT"
+init_worktree_env llvm "$WORKTREE_ROOT" "$WORKTREE_NAME" "$SCRIPTS_ROOT"
 
 echo "Created worktree ${WORKTREE_NAME} at ${WORKTREE_ROOT}"
 echo "Next steps"

@@ -51,4 +51,4 @@ cd "$MAIN_LLVM"
 echo "Removing worktree $WORKTREE_PATH ..."
 git worktree remove "$WORKTREE_PATH"
 
-cleanup_worktree_env "$WORKTREE_ENV" "$BRANCH_OR_PATH"
+cleanup_worktree_env "$WORKTREE_ENV" "$BRANCH_OR_PATH" "$SCRIPTS_ROOT/config/llvm-workspace-seed"

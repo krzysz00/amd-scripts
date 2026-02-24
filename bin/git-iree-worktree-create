@@ -7,6 +7,8 @@ REPO_NAME="iree"
 MAIN_IREE="$IREES/main/$REPO_NAME"
 SCRIPTS_ROOT="${0:a:h:h}"
 
+source "${SCRIPTS_ROOT}/utils/worktree-functions.sh"
+
 if [[ ! -d $MAIN_IREE ]]; then
     echo "No main IREE repository in the expected place"
     exit 1
@@ -55,7 +57,6 @@ cd "$WORKTREE_SRC_ROOT"
 mkdir -p .vscode
 [[ -d .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/iree-vscode-settings.json" ".vscode/settings.json"
 [[ -a CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/iree-presets.json" CMakeUserPresets.json
-[[ -a ../CLAUDE.md ]] || cp "${SCRIPTS_ROOT}/config/iree-CLAUDE.md" "../CLAUDE.md"
 
 git submodule --quiet init
 # Note: this dosen't create recursive submodules but it's fine since Torch
@@ -63,11 +64,9 @@ git submodule --quiet init
 git config --file .gitmodules --name-only --get-regexp path | cut -f2 -d. | \
   parallel --jobs 16 "echo 'Creating quasi-worktree of {}' && git submodule update --reference '$MAIN_IREE/{}' '{}'"
 
-# Set up a VS code workspace file through the magic of templates.
-sed -e "s/#branch#/$WORKTREE_NAME/g" -e "s!#rootPath#!${WORKTREE_ROOT}!g" "${SCRIPTS_ROOT}/config/iree.code-workspace.template" >"../iree-${WORKTREE_NAME}.code-workspace"
+cd "$WORKTREE_ROOT"
 
-echo "Creating virtual environment ..."
-"${SCRIPTS_ROOT}/bin/iree-setup-environment" "$WORKTREE_ROOT"
+init_worktree_env iree "$WORKTREE_ROOT" "$WORKTREE_NAME" "$SCRIPTS_ROOT"
 
 echo "Created worktree ${WORKTREE_NAME} at ${WORKTREE_ROOT}"
 echo "Next steps"

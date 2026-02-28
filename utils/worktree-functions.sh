@@ -12,7 +12,7 @@ init_worktree_env() {
   # Set up a VS code workspace file through the magic of templates.
   sed -e "s/#branch#/$worktree_name/g" -e "s!#rootPath#!${worktree_root}!g" "${scripts_root}/config/${project_name}.code-workspace.template" >"./${project_name}-${worktree_name}.code-workspace"
 
-  cp -an "${SCRIPTS_ROOT}/config/${project_name}-workspace-seed/." ./
+  cp -a --update=none "${SCRIPTS_ROOT}/config/${project_name}-workspace-seed/." ./
 
   echo "Creating virtual environment ..."
   "${SCRIPTS_ROOT}/bin/${project_name}-setup-environment" "$worktree_root"
@@ -39,7 +39,7 @@ cleanup_worktree_env() {
     for config in "$seed_dir/*"; do
       local fname="${config:t}"
       if [[ -e "${worktree_env}/${fname}" ]]; then
-        rm "${worktree_env}/${fname}"
+        rm -rf "${worktree_env}/${fname}"
       fi
     done
     rmdir "${worktree_env}" || echo "There's still something in the worktree: $(ls -la ${worktree_env})"

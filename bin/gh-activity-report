@@ -81,13 +81,50 @@ for repo in "${REPOS[@]}"; do
     filtered=$(echo "$results" | jq --arg user "$USER" \
         '[.[] | select(.author.login != $user)]')
 
-    count=$(echo "$filtered" | jq 'length')
+    # For each candidate PR, check whether the user actually left a review
+    # or comment since the given date. The search API only tells us the PR
+    # was updated, not that *we* interacted with it recently.
+    kept="[]"
+    n=$(echo "$filtered" | jq 'length')
+    for ((i = 0; i < n; i++)); do
+        pr=$(echo "$filtered" | jq ".[$i]")
+        number=$(echo "$pr" | jq -r '.number')
+        owner=${repo%%/*}
+        name=${repo##*/}
+
+        has_activity=$(gh api graphql -f query="
+            {
+                repository(owner: \"${owner}\", name: \"${name}\") {
+                    pullRequest(number: ${number}) {
+                        reviews(first: 100, author: \"${USER}\") {
+                            nodes { createdAt }
+                        }
+                        comments(first: 100) {
+                            nodes { author { login } createdAt }
+                        }
+                    }
+                }
+            }" --jq "
+            .data.repository.pullRequest
+            | (
+                [.reviews.nodes[] | select(.createdAt >= \"${SINCE}\")] +
+                [.comments.nodes[] | select(.author.login == \"${USER}\" and .createdAt >= \"${SINCE}\")]
+              )
+            | length > 0
+        " 2>/dev/null || echo "false")
+
+        if [[ "$has_activity" == "true" ]]; then
+            kept=$(echo "$kept" "$pr" | jq -s '.[0] + [.[1]]')
+        fi
+    done
+
+    count=$(echo "$kept" | jq 'length')
     total_reviewed=$((total_reviewed + count))
 
     if [[ "$count" -eq 0 ]]; then
         echo "_None_"
     else
-        echo "$filtered" | jq -r \
+        echo "$kept" | jq -r \
             '.[] | "- [\(.title)](\(.url)) — \(.state) (by @\(.author.login))"'
     fi
     echo ""

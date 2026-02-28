@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+#
+# Generate a GitHub activity report for iree-org/iree and llvm/llvm-project.
+#
+# Usage: gh-activity-report YYYY-MM-DD
+#
+# Produces a Markdown report listing:
+#   1. PRs authored that have had activity since the given date
+#   2. PRs reviewed (with count)
+#   3. Issues interacted with
+#   4. Discussions interacted with
+
+set -euo pipefail
+
+SINCE="${1:?Usage: $0 YYYY-MM-DD}"
+
+if ! [[ "$SINCE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+    echo "Error: Date must be in YYYY-MM-DD format" >&2
+    exit 1
+fi
+
+REPOS=(iree-org/iree llvm/llvm-project)
+USER=$(gh api user --jq '.login')
+SEARCH_LIMIT=300
+
+echo "# GitHub Activity Report"
+echo ""
+echo "**User:** @${USER}  "
+echo "**Since:** ${SINCE}  "
+echo "**Generated:** $(date -I)"
+echo ""
+
+# ── Section 1: My PRs with activity since the date ──────────────────────────
+
+echo "## My Pull Requests"
+echo ""
+
+for repo in "${REPOS[@]}"; do
+    echo "### ${repo}"
+    echo ""
+
+    results=$(gh search prs \
+        --author "$USER" \
+        --repo "$repo" \
+        --updated ">=${SINCE}" \
+        --json title,url,state \
+        --limit "$SEARCH_LIMIT" \
+        --sort updated \
+        --order desc 2>/dev/null || echo "[]")
+
+    count=$(echo "$results" | jq 'length')
+    if [[ "$count" -eq 0 ]]; then
+        echo "_None_"
+    else
+        echo "$results" | jq -r '.[] | "- [\(.title)](\(.url)) — \(.state)"'
+    fi
+    echo ""
+done
+
+# ── Section 2: PRs reviewed ─────────────────────────────────────────────────
+
+echo "## Pull Requests Reviewed"
+echo ""
+
+total_reviewed=0
+
+for repo in "${REPOS[@]}"; do
+    echo "### ${repo}"
+    echo ""
+
+    results=$(gh search prs \
+        --reviewed-by "$USER" \
+        --repo "$repo" \
+        --updated ">=${SINCE}" \
+        --json title,url,state,number,author \
+        --limit "$SEARCH_LIMIT" \
+        --sort updated \
+        --order desc 2>/dev/null || echo "[]")
+
+    # Exclude self-authored PRs from the reviewed list.
+    filtered=$(echo "$results" | jq --arg user "$USER" \
+        '[.[] | select(.author.login != $user)]')
+
+    count=$(echo "$filtered" | jq 'length')
+    total_reviewed=$((total_reviewed + count))
+
+    if [[ "$count" -eq 0 ]]; then
+        echo "_None_"
+    else
+        echo "$filtered" | jq -r \
+            '.[] | "- [\(.title)](\(.url)) — \(.state) (by @\(.author.login))"'
+    fi
+    echo ""
+done
+
+echo "**Total PRs reviewed: ${total_reviewed}**"
+echo ""
+
+# ── Section 3: Issues interacted with ────────────────────────────────────────
+
+echo "## Issues Interacted With"
+echo ""
+
+for repo in "${REPOS[@]}"; do
+    echo "### ${repo}"
+    echo ""
+
+    results=$(gh search issues \
+        --involves "$USER" \
+        --repo "$repo" \
+        --updated ">=${SINCE}" \
+        --json title,url,state,isPullRequest \
+        --limit "$SEARCH_LIMIT" \
+        --sort updated \
+        --order desc 2>/dev/null || echo "[]")
+
+    # Filter to issues only (not pull requests).
+    filtered=$(echo "$results" | jq '[.[] | select(.isPullRequest | not)]')
+
+    count=$(echo "$filtered" | jq 'length')
+    if [[ "$count" -eq 0 ]]; then
+        echo "_None_"
+    else
+        echo "$filtered" | jq -r '.[] | "- [\(.title)](\(.url)) — \(.state)"'
+    fi
+    echo ""
+done
+
+# ── Section 4: Discussions interacted with ───────────────────────────────────
+
+echo "## Discussions Interacted With"
+echo ""
+
+for repo in "${REPOS[@]}"; do
+    echo "### ${repo}"
+    echo ""
+
+    results=$(gh api graphql -f query="
+        {
+            search(query: \"involves:${USER} repo:${repo} updated:>=${SINCE}\",
+                   type: DISCUSSION, first: 100) {
+                nodes {
+                    ... on Discussion {
+                        title
+                        url
+                        number
+                    }
+                }
+            }
+        }" --jq '.data.search.nodes' 2>/dev/null || echo "[]")
+
+    count=$(echo "$results" | jq 'length')
+    if [[ "$count" -eq 0 ]]; then
+        echo "_None_"
+    else
+        echo "$results" | jq -r '.[] | "- [\(.title)](\(.url))"'
+    fi
+    echo ""
+done

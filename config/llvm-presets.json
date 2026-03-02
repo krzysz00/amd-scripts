@@ -50,6 +50,10 @@
           "type": "BOOL",
           "value": "ON"
         },
+        "LLVM_CCACHE_PARAMS": {
+          "type": "STRING",
+          "value": "CCACHE_CPP2=yes CCACHE_HASHDIR=no CCACHE_SLOPPINESS=include_file_ctime,include_file_mtime,pch_defines,time_macros"
+        },
         "LLVM_TARGETS_TO_BUILD": {
           "type": "STRING",
           "value": "AMDGPU;X86"

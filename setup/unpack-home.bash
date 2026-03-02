@@ -98,12 +98,12 @@ echo "Ccache..."
 mkdir -p "$HOME/.config/ccache"
 [[ -f "$HOME/.config/ccache/ccache.conf" ]] || echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
 ccache --set-config "base_dir=$HOME"
-ccache --set-config "sloppiness=include_file_mtime,include_file_ctime"
+ccache --set-config "sloppiness=include_file_mtime,include_file_ctime,pch_defines,time_macros"
 ccache --set-config "hash_dir=false"
 
 if [[ $is_slow_home -eq 0 ]]; then
   echo "Using /tmp for cache, /home is slow"
-  echo "cache_dir = /tmp/ccache" >>"$HOME/.config/ccache/ccache.conf"
+  ccache --set-config "cache_dir=/tmp/ccache"
 fi
 
 echo "NVM and claude and such..."

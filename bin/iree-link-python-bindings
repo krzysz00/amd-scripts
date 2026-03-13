@@ -8,11 +8,13 @@ if [[ -z $VIRTUAL_ENV ]]; then
 fi
 
 declare build_dir
-if [[ -x "$PWD/tools/iree-opt" ]]; then
+if [[ $# >= 1 && -x "$1/tools/iree-opt" ]]; then
+  build_dir="$1"
+elif [[ -x "$PWD/tools/iree-opt" ]]; then
   build_dir="$PWD"
-elif [[ -f "${PWD:h}/build/tools/iree-opt" ]]; then
+elif [[ -x "${PWD:h}/build/tools/iree-opt" ]]; then
   build_dir="${PWD:h}/build"
-elif [[ -f "$PWD/build/tools-iree-opt" ]]; then
+elif [[ -x "$PWD/build/tools/iree-opt" ]]; then
   build_dir="$PWD/build"
 else
   echo "Can't find a built IREE"
@@ -20,5 +22,5 @@ else
 fi
 
 cd "$build_dir"
-env CMAKE_INSTALL_MODE=ABS_SYMLINK pip install -e compiler
-env CMAKE_INSTALL_MODE=ABS_SYMLINK pip install -e runtime
+env CMAKE_INSTALL_MODE=ABS_SYMLINK uv pip install -e compiler
+env CMAKE_INSTALL_MODE=ABS_SYMLINK uv pip install -e runtime

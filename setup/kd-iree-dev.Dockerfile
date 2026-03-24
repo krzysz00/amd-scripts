@@ -1,7 +1,7 @@
 FROM ghcr.io/nod-ai/ossci-gitops/iree-dev:main
 
 LABEL org.opencontainers.image.source=https://github.com/krzysz00/amd-scripts
-ARG LLVM_VERSION=21
+ARG LLVM_VERSION=22
 ARG EMACS_VERSION=30.2
 
 USER root
@@ -15,7 +15,7 @@ RUN usermod -m -d /home/kdrewnia -l kdrewnia ossci && \
 # RUN yes | unminimize
 
 # Last line is LLVM install script dependencies
-RUN apt-get install -y tmux ncurses-term \
+RUN apt-get -y update && apt-get install -y tmux ncurses-term \
     direnv rcm python-is-python3 keychain \
     lsyncd rsync \
     man man-db zsh-doc \

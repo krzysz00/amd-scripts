@@ -37,7 +37,7 @@
           "type": "BOOL",
           "value": "ON"
         },
-        "IREE_HIP_TEST_TARGET_CHIP": {
+        "IREE_ROCM_TEST_TARGET_CHIP": {
           "type": "STRING",
           "value": "$env{ROCM_CHIP}"
         },
@@ -78,7 +78,7 @@
       "displayName": "Tracy build",
       "description": "Build for tracing (targets build-tracy/)",
       "inherits": "default",
-      "binaryDir": "${sourceDir}/build-tracy",
+      "binaryDir": "${sourceParentDir}/build-tracy",
       "cacheVariables": {
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",
@@ -89,7 +89,21 @@
           "value": "ON"
         }
       }
+    },
+    {
+      "name": "asan",
+      "displayName": "ASAN build",
+      "description": "Build for ASAN (targets build-asan/)",
+      "inherits": "default",
+      "binaryDir": "${sourceParentDir}/build-asan",
+      "cacheVariables": {
+        "IREE_ENABLE_ASAN": {
+          "type": "BOOL",
+          "value": "ON"
+        }
+      }
     }
+
   ],
 
   "buildPresets": [

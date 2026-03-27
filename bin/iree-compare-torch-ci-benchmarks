@@ -1,0 +1,84 @@
+#!/usr/bin/env python3
+"""Compare benchmark results from two IREE torch_models CI job summaries.
+
+Usage: compare_benchmarks <baseline.json> <test.json>
+
+Produces a Markdown table of per-benchmark timings and speedup factors.
+Speedup > 1.00x means the test run is faster than the baseline.
+"""
+
+import json
+import math
+import sys
+
+
+def load_benchmarks(path):
+    """Return {name: time_ms} from a job_summary.json file."""
+    with open(path) as f:
+        data = json.load(f)
+    benchmarks = {}
+    for row in data["benchmark"]["rows"]:
+        name = row[0]
+        time_ms = float(row[1])  # "Current Time (ms)"
+        benchmarks[name] = time_ms
+    return benchmarks
+
+
+def main():
+    if len(sys.argv) != 3:
+        print(f"Usage: {sys.argv[0]} <baseline.json> <test.json>", file=sys.stderr)
+        sys.exit(1)
+
+    baseline_path, test_path = sys.argv[1], sys.argv[2]
+    baseline = load_benchmarks(baseline_path)
+    test = load_benchmarks(test_path)
+
+    all_names = sorted(set(baseline) | set(test))
+    if not all_names:
+        print("No benchmarks found.", file=sys.stderr)
+        sys.exit(1)
+
+    # Strip the common .json suffix from names for readability.
+    def short_name(name):
+        return name.removesuffix(".json")
+
+    # Build table rows and collect speedups for the geometric mean.
+    rows = []
+    log_speedups = []
+    for name in all_names:
+        b = baseline.get(name)
+        t = test.get(name)
+        if b is not None and t is not None:
+            speedup = b / t
+            log_speedups.append(math.log(speedup))
+            rows.append((short_name(name), f"{b:.3f}", f"{t:.3f}", f"{speedup:.2f}x"))
+        elif b is not None:
+            rows.append((short_name(name), f"{b:.3f}", "—", "—"))
+        else:
+            rows.append((short_name(name), "—", f"{t:.3f}", "—"))
+
+    # Column widths.
+    headers = ("Benchmark", "Baseline (ms)", "Test (ms)", "Speedup")
+    widths = [len(h) for h in headers]
+    for row in rows:
+        for i, cell in enumerate(row):
+            widths[i] = max(widths[i], len(cell))
+
+    def fmt_row(cells):
+        return "| " + " | ".join(c.ljust(widths[i]) for i, c in enumerate(cells)) + " |"
+
+    sep = "|" + "|".join("-" + "-" * w + "-" for w in widths) + "|"
+
+    print(fmt_row(headers))
+    print(sep)
+    for row in rows:
+        print(fmt_row(row))
+
+    if log_speedups:
+        geo_mean = math.exp(sum(log_speedups) / len(log_speedups))
+        print()
+        print(f"**Overall speedup (geometric mean): {geo_mean:.2f}x**")
+
+
+if __name__ == "__main__":
+    main()

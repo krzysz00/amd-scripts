@@ -659,6 +659,7 @@ def _resolve_labels(arg: Optional[list[str]], repo: str) -> Optional[list[str]]:
     labels = fetch_repo_labels(repo)
     if not labels:
         return []
+    labels = sorted(labels, key=lambda x: x[0].lower())
     choices = [(name, desc or name, False) for name, desc in labels]
     picks = dialog_checklist("Labels", f"Labels for {repo}", choices)
     return picks

@@ -1,0 +1,128 @@
+#compdef iree-tracker
+#description CLI for the nod-ai Codegen Tracker (Projects v2 #40)
+
+_iree_tracker_statuses() {
+  local -a opts
+  opts=('Todo' 'In Progress' 'Done' 'na:leave status unset')
+  _describe -t statuses 'status' opts
+}
+
+_iree_tracker_repos() {
+  local -a opts
+  opts=('iree:iree-org/iree' 'draft:draft issue on the project board')
+  _describe -t repos 'repo' opts
+}
+
+_iree_tracker_assignees() {
+  local -a opts
+  opts=('me:assign to default user (krzysz00)' 'none:leave unassigned')
+  _describe -t assignees 'assignee' opts
+}
+
+_iree_tracker_labels() {
+  # Pull labels for the repo if -R/--repo is set; otherwise no completion.
+  local repo
+  local i
+  for (( i = 1; i <= $#words; i++ )); do
+    case ${words[i]} in
+      -R|--repo)
+        repo=${words[i+1]}
+        ;;
+    esac
+  done
+  case $repo in
+    iree)  repo=iree-org/iree ;;
+    draft) return 0 ;;  # drafts have no labels
+  esac
+  [[ -n $repo ]] || return 1
+  local -a labels
+  labels=(${(f)"$(gh label list -R $repo --json name --jq '.[].name' --limit 200 2>/dev/null)"})
+  _describe -t labels 'label' labels
+}
+
+_iree-tracker() {
+  local curcontext="$curcontext" state line
+  typeset -A opt_args
+
+  _arguments -C \
+    '--refresh-cache[Re-fetch project field/option metadata before running]' \
+    '(-h --help)'{-h,--help}'[Show help]' \
+    '1: :_iree_tracker_commands' \
+    '*::arg:->args'
+
+  case $state in
+    args)
+      case $words[1] in
+        create)          _iree_tracker_create ;;
+        import)          _iree_tracker_import ;;
+        created)         _iree_tracker_created_assigned ;;
+        assigned)        _iree_tracker_created_assigned ;;
+        poke)            _iree_tracker_poke ;;
+        list-categories) ;;
+        list-projects)   ;;
+      esac
+      ;;
+  esac
+}
+
+_iree_tracker_commands() {
+  local -a cmds
+  cmds=(
+    'create:Create a new tracker issue'
+    'import:Add an existing issue/PR to the tracker'
+    'created:List items authored by USER'
+    'assigned:List items assigned to USER'
+    'poke:Walk through Todo->InProgress, then InProgress->Done'
+    'list-categories:Print every Category option, one per line'
+    'list-projects:Print every Project option, one per line'
+  )
+  _describe -t commands 'command' cmds
+}
+
+_iree_tracker_create() {
+  _arguments \
+    '(-R --repo)'{-R,--repo}'[Repository (iree | draft | owner/name)]:repo:_iree_tracker_repos' \
+    '(-b --body-file)'{-b,--body-file}'[Use this file as the issue body]:body file:_files' \
+    '--body[Inline issue body (skips $EDITOR)]:body text:' \
+    "--no-editor[Don't open \$EDITOR; requires --title]" \
+    '*'{-l,--label}'[Label name (repeatable)]:label:_iree_tracker_labels' \
+    '(-c --category)'{-c,--category}'[Category option name (use "" or "na" to skip)]:category:' \
+    '(-p --priority)'{-p,--priority}'[Priority option name (use "" or "na" to skip)]:priority:' \
+    '--project-field[Project option name (use "" or "na" to skip)]:project:' \
+    '(-a --assignee)'{-a,--assignee}'[Assignee (me | none | <handle>)]:assignee:_iree_tracker_assignees' \
+    '(-s --status)'{-s,--status}'[Status option name]:status:_iree_tracker_statuses' \
+    '(-y --yes)'{-y,--yes}'[Skip the final confirm dialog]' \
+    ':seed title:'
+}
+
+_iree_tracker_import() {
+  _arguments \
+    '(-c --category)'{-c,--category}'[Category (use "" or "na" to skip)]:category:' \
+    '(-p --priority)'{-p,--priority}'[Priority (use "" or "na" to skip)]:priority:' \
+    '--project-field[Project option name (use "" or "na" to skip)]:project:' \
+    '(-s --status)'{-s,--status}'[Status (default: Todo)]:status:_iree_tracker_statuses' \
+    '(--takeover --no-takeover)--takeover[Assign the imported issue to yourself]' \
+    '(--takeover --no-takeover)--no-takeover[Do not assign the imported issue]' \
+    '(-y --yes)'{-y,--yes}'[Skip the final confirm dialog]' \
+    ':issue/PR url:'
+}
+
+_iree_tracker_created_assigned() {
+  _arguments \
+    '(-u --user)'{-u,--user}'[Alternate spelling of the positional USER]:user:' \
+    '*'{-s,--status}'[Filter to this status (repeatable)]:status:_iree_tracker_statuses' \
+    '--all-status[Include Done in the output]' \
+    '--format[Output format]:format:(text json)' \
+    ':user:'
+}
+
+_iree_tracker_poke() {
+  _arguments \
+    '(-u --user)'{-u,--user}'[GitHub user]:user:' \
+    '--no-todo[Skip pass A (Todo -> In Progress)]' \
+    '--no-in-progress[Skip pass B (In Progress -> Done)]' \
+    '--items[Comma-separated project item IDs to move (no TUI)]:item ids:' \
+    '(-y --yes)'{-y,--yes}'[Skip confirmation]'
+}
+
+_iree-tracker "$@"

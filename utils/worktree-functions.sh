@@ -13,6 +13,9 @@ init_worktree_env() {
   sed -e "s/#branch#/$worktree_name/g" -e "s!#rootPath#!${worktree_root}!g" "${scripts_root}/config/${project_name}.code-workspace.template" >"./${project_name}-${worktree_name}.code-workspace"
 
   cp -a --update=none "${SCRIPTS_ROOT}/config/${project_name}-workspace-seed/." ./
+  if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
+     ln -s ./AGENTS.md ./CLAUDE.md
+  fi
 
   echo "Creating virtual environment ..."
   "${SCRIPTS_ROOT}/bin/${project_name}-setup-environment" "$worktree_root"

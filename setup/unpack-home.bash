@@ -71,6 +71,11 @@ if [[ ! -e iree/main/.direnv ]]; then
     popd #iree
   fi
   sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/iree/main!g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
+  cp -a --update=none "${repo_dir}/config/iree-workspace-seed/." ./
+  if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
+     ln -s ./AGENTS.md ./CLAUDE.md
+  fi
+
   "${repo_dir}/bin/iree-setup-environment" "$PWD"
   popd #iree/main
 fi
@@ -90,6 +95,11 @@ if [[ ! -e llvm/main/.direnv ]]; then
     popd # llvm-project
   fi
   sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/llvm/main!g" "${repo_dir}/config/llvm.code-workspace.template" >llvm-main.code-workspace
+  cp -a --update=none "${repo_dir}/config/llvm-workspace-seed/." ./
+  if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
+     ln -s ./AGENTS.md ./CLAUDE.md
+  fi
+
   "${repo_dir}/bin/llvm-setup-environment" "$PWD"
   popd # llvm/main
 fi
@@ -106,6 +116,11 @@ if [[ $is_slow_home -eq 0 ]]; then
   ccache --set-config "cache_dir=/tmp/ccache"
 fi
 
+echo "Beads (rust)..."
+if ! command -v "br" &>/dev/null; then
+  curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/beads_rust/main/install.sh?$(date +%s)" | bash
+fi
+
 echo "NVM and claude and such..."
 curl https://cursor.com/install -fsS | bash
 
@@ -116,6 +131,27 @@ source "$HOME/.nvm/nvm.sh"
 nvm install 'lts/*'
 nvm use 'lts/*'
 curl -fsSL https://claude.ai/install.sh | bash
+npm install -g @openai/codex
+npm install -g opencode-ai
+
+echo "Jakub's workspace"
+if [[ ! -d kuhar-agent-workspace ]]; then
+  git clone git@github.com:krzysz00/kuhar-agent-workspace.git
+  pushd kuhar-agent-workspace
+  git remote add upstream https://github.com/kuhar/agent-workspace.git
+  popd # kuhar-agent-workspace
+  ln -sv "$HOME/kuhar-agent-workspace/tools/peanut-review/bin/peanut-review" "$HOME/.local/bin/peanut-review"
+  ln -sv "$HOME/kuhar-agent-workspace/tools/peanut-review/bin/peanut_review_serve.sh" "$HOME/.local/bin/peanut_review_serve.sh"
+fi
+
+mkdir -p reviews .agents/skills/ .claude/skills
+for skill in "mark-and-recall" "peanut-review"; do
+  local skill_dir="$HOME/kuhar-agent-workspace/skills/$skill"
+  if [[ -d "$skill_dir" ]]; then
+    [[ -e ".agents/skills/$skill" ]] || ln -sv "$skill_dir" ".agents/skills/$skill"
+    [[ -e ".claude/skills/$skill" ]] || ln -sv "$skill_dir" ".claude/skills/$skill"
+  fi
+done
 
 echo "Next steps"
 echo " - chsh kdrewnia /usr/bin/zsh"

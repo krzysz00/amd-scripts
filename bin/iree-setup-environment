@@ -21,7 +21,7 @@ fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/iree/runtime/bindings/python/iree/runtime/build_requirements.txt"
-uv pip install -q nanobind pre-commit
+uv pip install -q nanobind pre-commit pygments
 
 if [[ ! -e "$root_dir/compile_commands.json" ]]; then
   ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"

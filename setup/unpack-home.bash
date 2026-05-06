@@ -20,6 +20,18 @@ check_command ccache
 
 repo_dir=$(dirname -- "$(dirname -- "$(realpath -- "${BASH_SOURCE[0]}")")")
 
+render_worktree_template() {
+  local template_path="$1"
+  local output_path="$2"
+  local worktree_root="$3"
+  local worktree_name="$4"
+
+  sed \
+    -e "s/#branch#/$worktree_name/g" \
+    -e "s!#rootPath#!${worktree_root}!g" \
+    "$template_path" >"$output_path"
+}
+
 cd "$HOME"
 
 gh_user=krzysz00
@@ -70,7 +82,8 @@ if [[ ! -e iree/main/.direnv ]]; then
     popd # third_party/llvm-project
     popd #iree
   fi
-  sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/iree/main!g" "${repo_dir}/config/iree.code-workspace.template" >iree-main.code-workspace
+  render_worktree_template "${repo_dir}/config/iree.code-workspace.template" iree-main.code-workspace "$HOME/iree/main" main
+  [[ -e .peanut-review.json ]] || render_worktree_template "${repo_dir}/config/iree.peanut-review.json.template" .peanut-review.json "$HOME/iree/main" main
   cp -a --update=none "${repo_dir}/config/iree-workspace-seed/." ./
   if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
      ln -s ./AGENTS.md ./CLAUDE.md
@@ -94,7 +107,8 @@ if [[ ! -e llvm/main/.direnv ]]; then
     echo '/*.code-workspace' >>.git/info/exclude
     popd # llvm-project
   fi
-  sed -e "s/#branch#/main/g" -e "s!#rootPath#!$HOME/llvm/main!g" "${repo_dir}/config/llvm.code-workspace.template" >llvm-main.code-workspace
+  render_worktree_template "${repo_dir}/config/llvm.code-workspace.template" llvm-main.code-workspace "$HOME/llvm/main" main
+  [[ -e .peanut-review.json ]] || render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" .peanut-review.json "$HOME/llvm/main" main
   cp -a --update=none "${repo_dir}/config/llvm-workspace-seed/." ./
   if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
      ln -s ./AGENTS.md ./CLAUDE.md
@@ -146,12 +160,19 @@ fi
 
 mkdir -p reviews .agents/skills/ .claude/skills
 for skill in "mark-and-recall" "peanut-review"; do
-  local skill_dir="$HOME/kuhar-agent-workspace/skills/$skill"
+  skill_dir="$HOME/kuhar-agent-workspace/skills/$skill"
   if [[ -d "$skill_dir" ]]; then
     [[ -e ".agents/skills/$skill" ]] || ln -sv "$skill_dir" ".agents/skills/$skill"
     [[ -e ".claude/skills/$skill" ]] || ln -sv "$skill_dir" ".claude/skills/$skill"
   fi
 done
+
+if [[ -d "$HOME/iree/main" && ! -e "$HOME/iree/main/.peanut-review.json" ]]; then
+  render_worktree_template "${repo_dir}/config/iree.peanut-review.json.template" "$HOME/iree/main/.peanut-review.json" "$HOME/iree/main" main
+fi
+if [[ -d "$HOME/llvm/main" && ! -e "$HOME/llvm/main/.peanut-review.json" ]]; then
+  render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" "$HOME/llvm/main/.peanut-review.json" "$HOME/llvm/main" main
+fi
 
 echo "Next steps"
 echo " - chsh kdrewnia /usr/bin/zsh"

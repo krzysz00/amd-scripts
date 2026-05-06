@@ -1,0 +1,26 @@
+{
+  "reviewRoot": "$HOME/reviews",
+  "workspaceRoot": "#rootPath#",
+  "repoRelative": "iree",
+  "reviewAgentTimeoutSeconds": 1800,
+  "agents": [
+    {
+      "name": "Irene",
+      "model": "gpt-5.5",
+      "persona": "irene.md",
+      "runner": "codex"
+    },
+    {
+      "name": "Merlin",
+      "model": "claude-opus-4-7-thinking-medium",
+      "persona": "merlin.md",
+      "runner": "cursor"
+    },
+    {
+      "name": "Vera",
+      "model": "gpt-5.5",
+      "persona": "vera.md",
+      "runner": "codex"
+    }
+  ]
+}

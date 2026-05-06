@@ -20,8 +20,8 @@ if [[ $# -lt 1 ]]; then
     echo "Create a worktree based off of [branch name], creating it if"
     echo "it doesn't exist. The worktree is created at ~/llvm/[tree name]/$REPO_NAME"
     echo "where [tree name] defaults to <branch name> with the stacking PR bits"
-    echo "removed. It then sets up a Python environment and creates a VS code"
-    echo "workspace file."
+    echo "removed. It then sets up a Python environment and creates VS code"
+    echo "workspace and peanut-review config files."
     exit 1
 fi
 

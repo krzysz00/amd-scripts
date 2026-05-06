@@ -21,8 +21,8 @@ if [[ $# -lt 1 ]]; then
     echo "it doesn't exist. The worktree is created at ~/iree/[tree name]/$REPO_NAME"
     echo "where [tree name] defaults to <branch name> with the stacking PR bits"
     echo "removed. It then sets up submodules to copy off of the main checkout"
-    echo "and creates a VS code workspace file. (Modelled on Ben's, who got his"
-    echo "from Claude)"
+    echo "and creates VS code workspace and peanut-review config files."
+    echo "(Modelled on Ben's, who got his from Claude)"
     exit 1
 fi
 

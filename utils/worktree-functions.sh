@@ -1,5 +1,17 @@
 #!/usr/bin/env zsh
 
+render_worktree_template() {
+  local template_path="$1"
+  local output_path="$2"
+  local worktree_root="$3"
+  local worktree_name="$4"
+
+  sed \
+    -e "s/#branch#/$worktree_name/g" \
+    -e "s!#rootPath#!${worktree_root}!g" \
+    "$template_path" >"$output_path"
+}
+
 # Set up the non-code parts of a net worktree-functions.sh
 # Usage: init_worktree_env <project_name> <worktree_root> <worktree_name> <scripts_root>
 init_worktree_env() {
@@ -10,15 +22,20 @@ init_worktree_env() {
 
   pushd "$worktree_root" >/dev/null
   # Set up a VS code workspace file through the magic of templates.
-  sed -e "s/#branch#/$worktree_name/g" -e "s!#rootPath#!${worktree_root}!g" "${scripts_root}/config/${project_name}.code-workspace.template" >"./${project_name}-${worktree_name}.code-workspace"
+  render_worktree_template "${scripts_root}/config/${project_name}.code-workspace.template" "./${project_name}-${worktree_name}.code-workspace" "$worktree_root" "$worktree_name"
 
-  cp -a --update=none "${SCRIPTS_ROOT}/config/${project_name}-workspace-seed/." ./
+  local peanut_review_template="${scripts_root}/config/${project_name}.peanut-review.json.template"
+  if [[ -f "$peanut_review_template" && ! -e ./.peanut-review.json ]]; then
+    render_worktree_template "$peanut_review_template" "./.peanut-review.json" "$worktree_root" "$worktree_name"
+  fi
+
+  cp -a --update=none "${scripts_root}/config/${project_name}-workspace-seed/." ./
   if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
      ln -s ./AGENTS.md ./CLAUDE.md
   fi
 
   echo "Creating virtual environment ..."
-  "${SCRIPTS_ROOT}/bin/${project_name}-setup-environment" "$worktree_root"
+  "${scripts_root}/bin/${project_name}-setup-environment" "$worktree_root"
 
   popd >/dev/null
 }
@@ -36,6 +53,7 @@ cleanup_worktree_env() {
               "${worktree_env}/.envrc" \
               "${worktree_env}/.cache" \
               "${worktree_env}/.claude" \
+              "${worktree_env}/.peanut-review.json" \
               "${worktree_env}/compile_commands.json" \
               "${worktree_env}/tablegen_compile_commands.yml" \
               "${worktree_env}"/*.code-workspace(N) || true

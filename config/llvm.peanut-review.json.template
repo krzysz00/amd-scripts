@@ -1,0 +1,26 @@
+{
+  "reviewRoot": "$HOME/reviews",
+  "workspaceRoot": "#rootPath#",
+  "repoRelative": "llvm-project",
+  "reviewAgentTimeoutSeconds": 1800,
+  "agents": [
+    {
+      "name": "Merlin",
+      "model": "gpt-5.5",
+      "persona": "merlin.md",
+      "runner": "codex"
+    },
+    {
+      "name": "Petra",
+      "model": "claude-opus-4-7-thinking-medium",
+      "persona": "petra.md",
+      "runner": "cursor"
+    },
+    {
+      "name": "Vera",
+      "model": "gpt-5.5",
+      "persona": "vera.md",
+      "runner": "codex"
+    }
+  ]
+}

@@ -20,11 +20,11 @@
         },
         "CMAKE_C_COMPILER": {
           "type": "STRING",
-          "value": "/usr/bin/clang"
+          "value": "clang"
         },
         "CMAKE_CXX_COMPILER": {
           "type": "STRING",
-          "value": "/usr/bin/clang++"
+          "value": "clang++"
         },
         "BUILD_SHARED_LIBS": {
           "type": "BOOL",

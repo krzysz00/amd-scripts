@@ -2,17 +2,17 @@
 
 set -euo pipefail
 
-LLVMS="$HOME/llvm"
-REPO_NAME="llvm-project"
+TRITONS="$HOME/triton"
+REPO_NAME="triton"
 SCRIPTS_ROOT="${0:a:h:h}"
 
 source "${SCRIPTS_ROOT}/utils/worktree-functions.sh"
 
-MAIN_LLVM="$(find_main_repository "$LLVMS" "$REPO_NAME")"
-LLVMS="${MAIN_LLVM:h:h}"
+MAIN_TRITON="$(find_main_repository "$TRITONS" "$REPO_NAME")"
+TRITONS="${MAIN_TRITON:h:h}"
 
-if [[ ! -d $MAIN_LLVM ]]; then
-    echo "No main LLVM repository in the expected place"
+if [[ ! -d $MAIN_TRITON ]]; then
+    echo "No main Triton repository in the expected place"
     exit 1
 fi
 
@@ -20,10 +20,9 @@ if [[ $# -lt 1 ]]; then
     echo "Usage: $0 <branch name> [tree name]"
     echo ""
     echo "Create a worktree based off of [branch name], creating it if"
-    echo "it doesn't exist. The worktree is created at ~/llvm/[tree name]/$REPO_NAME"
+    echo "it doesn't exist. The worktree is created at ~/triton/[tree name]/$REPO_NAME"
     echo "where [tree name] defaults to <branch name> with the stacking PR bits"
-    echo "removed. It then sets up a Python environment and creates VS code"
-    echo "workspace and peanut-review config files."
+    echo "removed. It then sets up a Python environment and workspace seed files."
     exit 1
 fi
 
@@ -35,14 +34,14 @@ else
     WORKTREE_NAME="$2"
 fi
 
-WORKTREE_ROOT="$LLVMS/$WORKTREE_NAME"
+WORKTREE_ROOT="$TRITONS/$WORKTREE_NAME"
 WORKTREE_SRC_ROOT="$WORKTREE_ROOT/$REPO_NAME"
 if [[ -d "$WORKTREE_ROOT" ]]; then
     echo "Will not overwrite existing worktree: $WORKTREE_ROOT"
     exit 1
 fi
 
-cd "$MAIN_LLVM"
+cd "$MAIN_TRITON"
 
 if ! git show-ref --quiet --heads "$BRANCH"; then
     echo "Creating branch $BRANCH from $(git rev-parse --abbrev-ref HEAD)"
@@ -54,17 +53,11 @@ printf "Creating worktree ...\n  - Branch: %s\n -- Path: %s\n" "$BRANCH" "$WORKT
 mkdir -p "$WORKTREE_ROOT"
 git worktree add "$WORKTREE_SRC_ROOT" "$BRANCH"
 
-cd "$WORKTREE_SRC_ROOT"
-mkdir -p .vscode
-[[ -a .vscode/settings.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-vscode-settings.json" ".vscode/settings.json"
-[[ -a llvm/CMakeUserPresets.json ]] || ln -s "${SCRIPTS_ROOT}/config/llvm-presets.json" llvm/CMakeUserPresets.json
-
 cd "$WORKTREE_ROOT"
 
-init_worktree_env llvm "$WORKTREE_ROOT" "$WORKTREE_NAME" "$SCRIPTS_ROOT"
+init_worktree_env triton "$WORKTREE_ROOT" "$WORKTREE_NAME" "$SCRIPTS_ROOT"
 
 echo "Created worktree ${WORKTREE_NAME} at ${WORKTREE_ROOT}"
 echo "Next steps"
 echo "  - cd ${WORKTREE_SRC_ROOT}"
-echo "  - llcmake --preset=default"
-echo "  - llcmake --build --preset=default"
+echo "  - uv pip install -e ."

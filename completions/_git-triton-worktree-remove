@@ -1,0 +1,5 @@
+#compdef git-triton-worktree-remove
+#description Remove a Triton worktree
+
+_arguments \
+  ':branch name:__git_branch_names'

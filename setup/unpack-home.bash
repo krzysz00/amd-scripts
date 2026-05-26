@@ -50,48 +50,15 @@ if [[ $is_slow_home -eq 0 ]]; then
     echo "Slow home infrastructure not prenent, aborting"
     exit 1
   fi
-  mkdir -p "$HOME/fast/iree"
   mkdir -p "$HOME/fast/llvm"
-  ln -sv "$HOME/fast/iree" "$HOME/iree"
+  mkdir -p "$HOME/fast/triton"
   ln -sv "$HOME/fast/llvm" "$HOME/llvm"
+  ln -sv "$HOME/fast/triton" "$HOME/triton"
 fi
 
 echo "UV..."
 curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
 export PATH="$HOME/.local/bin:$PATH"
-
-if [[ ! -e iree/main/.direnv ]]; then
-  mkdir -p iree/main
-  pushd iree/main
-
-  echo "IREE..."
-  if [[ ! -d iree ]]; then
-    git clone --recursive git@github.com:iree-org/iree.git
-    pushd iree
-    git config commit.gpgsign true
-    git config tag.gpgsign true
-    mkdir -p .vscode
-    ln -sv "${repo_dir}/config/iree-vscode-settings.json" .vscode/settings.json
-    ln -sv "${repo_dir}/config/iree-presets.json" CMakeUserPresets.json
-    git remote add fork git@github.com:$gh_user/iree.git
-
-    echo "Enable integration..."
-    pushd third_party/llvm-project
-    git remote add fork git@github.com:$gh_user/llvm-project.git
-    git remote add upstream git@github.com:llvm/llvm-project.git
-    popd # third_party/llvm-project
-    popd #iree
-  fi
-  render_worktree_template "${repo_dir}/config/iree.code-workspace.template" iree-main.code-workspace "$HOME/iree/main" main
-  [[ -e .peanut-review.json ]] || render_worktree_template "${repo_dir}/config/iree.peanut-review.json.template" .peanut-review.json "$HOME/iree/main" main
-  cp -a --update=none "${repo_dir}/config/iree-workspace-seed/." ./
-  if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
-     ln -s ./AGENTS.md ./CLAUDE.md
-  fi
-
-  "${repo_dir}/bin/iree-setup-environment" "$PWD"
-  popd #iree/main
-fi
 
 if [[ ! -e llvm/main/.direnv ]]; then
   echo "LLVM upstream"
@@ -116,6 +83,25 @@ if [[ ! -e llvm/main/.direnv ]]; then
 
   "${repo_dir}/bin/llvm-setup-environment" "$PWD"
   popd # llvm/main
+fi
+
+if [[ ! -e triton/main/.direnv ]]; then
+  echo "Triton upstream"
+  mkdir -p triton/main
+  pushd triton/main
+  if [[ ! -d triton ]]; then
+    git clone git@github.com:triton-lang/triton.git
+    pushd triton
+    git remote add fork git@github.com:$gh_user/triton.git
+    popd # triton
+  fi
+  cp -a --update=none "${repo_dir}/config/triton-workspace-seed/." ./
+  if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
+     ln -s ./AGENTS.md ./CLAUDE.md
+  fi
+
+  "${repo_dir}/bin/triton-setup-environment" "$PWD"
+  popd # triton/main
 fi
 
 echo "Ccache..."
@@ -167,9 +153,6 @@ for skill in "mark-and-recall" "peanut-review"; do
   fi
 done
 
-if [[ -d "$HOME/iree/main" && ! -e "$HOME/iree/main/.peanut-review.json" ]]; then
-  render_worktree_template "${repo_dir}/config/iree.peanut-review.json.template" "$HOME/iree/main/.peanut-review.json" "$HOME/iree/main" main
-fi
 if [[ -d "$HOME/llvm/main" && ! -e "$HOME/llvm/main/.peanut-review.json" ]]; then
   render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" "$HOME/llvm/main/.peanut-review.json" "$HOME/llvm/main" main
 fi
@@ -177,4 +160,3 @@ fi
 echo "Next steps"
 echo " - chsh kdrewnia /usr/bin/zsh"
 echo " - import GPG key"
-echo " - pre-commit install in main IREE branch"

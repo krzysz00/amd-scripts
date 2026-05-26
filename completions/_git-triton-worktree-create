@@ -1,0 +1,6 @@
+#compdef git-triton-worktree-create
+#description Create a Triton worktree
+
+_arguments \
+  ':branch name:__git_branch_names' \
+  ':worktree name:'

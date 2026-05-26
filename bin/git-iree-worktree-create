@@ -4,10 +4,12 @@ set -euo pipefail
 
 IREES="$HOME/iree"
 REPO_NAME="iree"
-MAIN_IREE="$IREES/main/$REPO_NAME"
 SCRIPTS_ROOT="${0:a:h:h}"
 
 source "${SCRIPTS_ROOT}/utils/worktree-functions.sh"
+
+MAIN_IREE="$(find_main_repository "$IREES" "$REPO_NAME")"
+IREES="${MAIN_IREE:h:h}"
 
 if [[ ! -d $MAIN_IREE ]]; then
     echo "No main IREE repository in the expected place"

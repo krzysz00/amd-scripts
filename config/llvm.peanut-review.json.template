@@ -5,6 +5,24 @@
   "reviewAgentTimeoutSeconds": 1800,
   "agents": [
     {
+      "name": "Andy",
+      "model": "claude-4-7-thinking-xhigh",
+      "persona": "andy.md",
+      "runner": "cursor"
+    },
+    {
+      "name": "Felix",
+      "model": "claude-4-7-thinking-medium",
+      "persona": "felix.md",
+      "runner": "cursor"
+    },
+    {
+      "name": "Lana",
+      "model": "gpt-5.5",
+      "persona": "lana.md",
+      "runner": "codex"
+    },
+    {
       "name": "Merlin",
       "model": "gpt-5.5",
       "persona": "merlin.md",
@@ -15,6 +33,12 @@
       "model": "claude-opus-4-7-thinking-medium",
       "persona": "petra.md",
       "runner": "cursor"
+    },
+    {
+      "name": "Soren",
+      "model": "gpt-5.5",
+      "persona": "soren.md",
+      "runner": "codex"
     },
     {
       "name": "Vera",

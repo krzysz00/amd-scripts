@@ -21,6 +21,7 @@ fi
 eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/triton/python/requirements.txt" -r "$root_dir/triton/python/test-requirements.txt"
+uv pip install pre-commit
 # Needed for testing etc.
 if (( $+ROCM_CHIP )); then
   uv pip install -q --index-url https://rocm.nightlies.amd.com/whl-multi-arch/ "torch[device-${ROCM_CHIP}]" "rocm[libraries,device-${ROCM_CHIP}]"

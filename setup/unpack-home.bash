@@ -160,3 +160,4 @@ fi
 echo "Next steps"
 echo " - chsh kdrewnia /usr/bin/zsh"
 echo " - import GPG key"
+echo " - pre-commit for Triton"

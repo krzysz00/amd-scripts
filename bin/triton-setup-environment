@@ -22,8 +22,12 @@ eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/triton/python/requirements.txt" -r "$root_dir/triton/python/test-requirements.txt"
 # Needed for testing etc.
-uv pip install torch --index-url "https://download.pytorch.org/whl/rocm7.2"
-uv pip uninstall triton pytorch-triton triton-rocm || true
+if (( $+ROCM_CHIP )); then
+  uv pip install -q --index-url https://rocm.nightlies.amd.com/whl-multi-arch/ "torch[device-${ROCM_CHIP}]" "rocm[libraries,device-${ROCM_CHIP}]"
+  uv pip uninstall triton pytorch-triton pytorch-triton-rocm triton-rocm -v
+else
+  echo "Make sure to install a torch/TheRock wheel"
+fi
 
 if [[ ! -e "$root_dir/compile_commands.json" ]]; then
   ln -s "$root_dir/triton/compile_commands.json" "compile_commands.json"

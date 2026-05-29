@@ -62,11 +62,11 @@
           "type": "BOOL",
           "value": "ON"
         },
-        "MLIR_ENABLE_BINDINGS_PYTHON": {
+        "LLVM_USE_RELATIVE_PATHS_IN_DEBUG_INFO": {
           "type": "BOOL",
           "value": "ON"
         },
-        "MLIR_ENABLE_ROCM_CONVERSIONS": {
+        "MLIR_ENABLE_BINDINGS_PYTHON": {
           "type": "BOOL",
           "value": "ON"
         },

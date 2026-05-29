@@ -12,7 +12,7 @@
     },
     {
       "name": "Merlin",
-      "model": "claude-opus-4-7-thinking-medium",
+      "model": "claude-opus-4-8-thinking-medium",
       "persona": "merlin.md",
       "runner": "cursor"
     },

@@ -6,13 +6,13 @@
   "agents": [
     {
       "name": "Andy",
-      "model": "claude-4-7-thinking-xhigh",
+      "model": "claude-opus-4-8-thinking-xhigh",
       "persona": "andy.md",
       "runner": "cursor"
     },
     {
       "name": "Felix",
-      "model": "claude-4-7-thinking-medium",
+      "model": "claude-opus-4-8-thinking-medium",
       "persona": "felix.md",
       "runner": "cursor"
     },
@@ -30,7 +30,7 @@
     },
     {
       "name": "Petra",
-      "model": "claude-opus-4-7-thinking-medium",
+      "model": "claude-opus-4-8-thinking-medium",
       "persona": "petra.md",
       "runner": "cursor"
     },

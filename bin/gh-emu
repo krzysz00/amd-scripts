@@ -1,0 +1,9 @@
+#!/bin/bash
+# gh-emu — gh wrapper that authenticates as the AMD EMU account.
+set -u
+TOKEN_FILE="$HOME/.config/gh-emu-token"
+if [[ ! -r "$TOKEN_FILE" ]]; then
+    echo "gh-emu: cannot read $TOKEN_FILE" >&2
+    exit 1
+fi
+GH_HOST=github.com GH_TOKEN="$(cat "$TOKEN_FILE")" exec gh "$@"

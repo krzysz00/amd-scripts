@@ -1,0 +1,26 @@
+#!/usr/bin/env zsh
+set -euo pipefail
+
+typeset -a inner_cmd
+typeset -a outer_cmd
+if [[ -d /opt/rocm ]]; then
+  inner_cmd+=("mount" "-t" "tmpfs" "none" "/opt/rocm" "&&")
+fi
+
+if command -v rocminfo >/dev/null; then
+  where_rocm="${$(command -v rocminfo):h:h}"
+  if [[ where_rocm != "/opt/rocm" ]]; then
+    inner_cmd+=("mount" "-t" "tmpfs" "none" "$where_rocm" "&&")
+  fi
+fi
+inner_cmd+=("sudo" "-u" "$USER")
+if (( $# > 0 )); then
+  outer_cmd+=("-E")
+  inner_cmd+=("-E" "HIDING_SYSTEM_ROCM=1")
+  inner_cmd+=($@)
+else
+  inner_cmd+=("HIDING_SYSTEM_ROCM=1" "-i")
+fi
+
+outer_cmd+=("unshare" "-m")
+exec sudo "${outer_cmd[@]}" bash -c "${(j: :)inner_cmd}"

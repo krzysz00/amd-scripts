@@ -145,7 +145,7 @@ if [[ ! -d kuhar-agent-workspace ]]; then
 fi
 
 mkdir -p reviews .agents/skills/ .claude/skills
-for skill in "mark-and-recall" "peanut-review"; do
+for skill in "peanut-review"; do
   skill_dir="$HOME/kuhar-agent-workspace/skills/$skill"
   if [[ -d "$skill_dir" ]]; then
     [[ -e ".agents/skills/$skill" ]] || ln -sv "$skill_dir" ".agents/skills/$skill"

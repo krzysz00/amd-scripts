@@ -152,19 +152,44 @@
       "targets": ["check-llvm"]
     },
     {
-      "name": "recheck-llvm",
+      "name": "llvm-full",
+      "displayName": "LLVM (full)",
+      "description": "Build and test LLVM (all targets)",
+      "configurePreset": "full",
+      "inherits": "llvm"
+    },
+    {
+      "name": "build-llvm",
+      "displayName": "Build LLVM",
+      "configurePreset": "default",
+      "targets": ["llvm-test-depends"]
+    },
+    {
+      "name": "build-llvm-full",
+      "displayName": "Build LLVM (full)",
+      "configurePreset": "full",
+      "inherits": "build-llvm"
+    },
+    {
+      "name": "opt-llc",
       "displayName": "Just opt and LLC",
       "description": "Only build opt and llc so we can iterate a test",
       "configurePreset": "default",
       "targets": ["opt", "llc"]
     },
     {
-      "name": "check-llvm-amdgpu",
+      "name": "llvm-amdgpu",
       "displayName": "LLVM (AMD tests only)",
       "inherits": "llvm",
       "environment": {
         "LIT_FILTER": "AMDGPU"
       }
+    },
+    {
+      "name": "llvm-amdgpu-full",
+      "displayName": "LLVM (AMD tests, full)",
+      "configurePreset": "full",
+      "inherits": "llvm-amdgpu"
     }
   ]
 }

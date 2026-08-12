@@ -44,26 +44,36 @@ rcup
 
 is_slow_home=0
 "${repo_dir}/bin/is-slow-home" || is_slow_home=$?
+WORK="$HOME"
+if [[ $# -eq 1 ]]; then
+   WORK="$1"
+elif [[ $is_slow_home -eq 0 ]]; then
+  WORK="$HOME/fast"
+fi
+
 if [[ $is_slow_home -eq 0 ]]; then
-  echo "Redirecting source code to fast/..."
   if [[ ! -d "$HOME/fast" ]] || [[ ! -d "$HOME/fast-persist" ]]; then
     echo "Slow home infrastructure not prenent, aborting"
     exit 1
   fi
-  mkdir -p "$HOME/fast/llvm"
-  mkdir -p "$HOME/fast/triton"
-  ln -sv "$HOME/fast/llvm" "$HOME/llvm"
-  ln -sv "$HOME/fast/triton" "$HOME/triton"
+fi
+
+if [[ $WORK != "$HOME" ]]; then
+  echo "Redirecting sources to $WORK ..."
+  mkdir -p "$WORK/llvm"
+  mkdir -p "$WORK/triton"
+  ln -sv "$WORK/llvm" "$HOME/llvm"
+  ln -sv "$WORK/triton" "$HOME/triton"
 fi
 
 echo "UV..."
 curl -LsSf https://astral.sh/uv/install.sh | env UV_NO_MODIFY_PATH=1 sh
 export PATH="$HOME/.local/bin:$PATH"
 
-if [[ ! -e llvm/main/.direnv ]]; then
+if [[ ! -e $WORK/llvm/main/.direnv ]]; then
   echo "LLVM upstream"
-  mkdir -p llvm/main
-  pushd llvm/main
+  mkdir -p "$WORK/llvm/main"
+  pushd "$WORK/llvm/main"
   if [[ ! -d llvm-project ]]; then
     git clone git@github.com:llvm/llvm-project.git
     pushd llvm-project
@@ -74,8 +84,8 @@ if [[ ! -e llvm/main/.direnv ]]; then
     echo '/*.code-workspace' >>.git/info/exclude
     popd # llvm-project
   fi
-  render_worktree_template "${repo_dir}/config/llvm.code-workspace.template" llvm-main.code-workspace "$HOME/llvm/main" main
-  [[ -e .peanut-review.json ]] || render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" .peanut-review.json "$HOME/llvm/main" main
+  render_worktree_template "${repo_dir}/config/llvm.code-workspace.template" llvm-main.code-workspace "$WORK/llvm/main" main
+  [[ -e .peanut-review.json ]] || render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" .peanut-review.json "$WORK/llvm/main" main
   cp -a --update=none "${repo_dir}/config/llvm-workspace-seed/." ./
   if [[ -f ./AGENTS.md && ! -e ./CLAUDE.md ]]; then
      ln -s ./AGENTS.md ./CLAUDE.md
@@ -85,10 +95,10 @@ if [[ ! -e llvm/main/.direnv ]]; then
   popd # llvm/main
 fi
 
-if [[ ! -e triton/main/.direnv ]]; then
+if [[ ! -e $WORK/triton/main/.direnv ]]; then
   echo "Triton upstream"
-  mkdir -p triton/main
-  pushd triton/main
+  mkdir -p "$WORK/triton/main"
+  pushd "$WORK/triton/main"
   if [[ ! -d triton ]]; then
     git clone git@github.com:triton-lang/triton.git
     pushd triton
@@ -107,7 +117,7 @@ fi
 echo "Ccache..."
 mkdir -p "$HOME/.config/ccache"
 [[ -f "$HOME/.config/ccache/ccache.conf" ]] || echo "max_size = 60.0G" >>"$HOME/.config/ccache/ccache.conf"
-ccache --set-config "base_dir=$HOME"
+ccache --set-config "base_dir=$WORK"
 ccache --set-config "sloppiness=include_file_mtime,include_file_ctime,pch_defines,time_macros"
 ccache --set-config "hash_dir=false"
 
@@ -153,8 +163,8 @@ for skill in "peanut-review"; do
   fi
 done
 
-if [[ -d "$HOME/llvm/main" && ! -e "$HOME/llvm/main/.peanut-review.json" ]]; then
-  render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" "$HOME/llvm/main/.peanut-review.json" "$HOME/llvm/main" main
+if [[ -d "$WORK/llvm/main" && ! -e "$WORK/llvm/main/.peanut-review.json" ]]; then
+  render_worktree_template "${repo_dir}/config/llvm.peanut-review.json.template" "$HOME/llvm/main/.peanut-review.json" "$WORK/llvm/main" main
 fi
 
 echo "Next steps"

@@ -62,8 +62,8 @@ if [[ $WORK != "$HOME" ]]; then
   echo "Redirecting sources to $WORK ..."
   mkdir -p "$WORK/llvm"
   mkdir -p "$WORK/triton"
-  ln -sv "$WORK/llvm" "$HOME/llvm"
-  ln -sv "$WORK/triton" "$HOME/triton"
+  [[ -e "$HOME/llvm" ]] || ln -sv "$WORK/llvm" "$HOME/llvm"
+  [[ -e "$HOME/triton" ]] || ln -sv "$WORK/triton" "$HOME/triton"
 fi
 
 echo "UV..."

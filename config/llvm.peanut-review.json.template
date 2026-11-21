@@ -6,7 +6,7 @@
   "agents": [
     {
       "name": "Andy",
-      "model": "claude-opus-5-5-xhigh",
+      "model": "claude-opus-5-5-medium",
       "persona": "andy.md",
       "runner": "cursor"
     },

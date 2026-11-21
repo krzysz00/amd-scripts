@@ -23,6 +23,7 @@ eval "$(direnv export zsh)"
 echo "Installing Python dependencies..."
 uv pip install -q -r "$root_dir/llvm-project/mlir/python/requirements.txt"
 uv pip install -q pygments # LLVM needs this
+uv pip install -q cmake # LLVM needs a newer cmake on ubuntu <= 24.04
 
 if [[ ! -e "$root_dir/compile_commands.json" ]]; then
   ln -s "$root_dir/build/compile_commands.json" "compile_commands.json"
